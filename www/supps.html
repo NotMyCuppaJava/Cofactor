@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Cofactor</title>
+        <link rel="stylesheet" href="style.css">
+        <!-- FONTS below -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    </head>
+    <body onload = "loadData(); loadJSON(); loadSupps(); populate()">
+        <!-- loadData();makeSchedule([7.5, 12.0, 20.0]) -->
+        <script src="main.js"></script>
+
+        <div id = "header">
+            <img src="assets/Cofactor.png" style="width:75px;height:75px;margin:12.5px">
+            <h1 id = "maintitle">My Supplements</h1>
+        </div>
+
+        <div id = "rackbodyx" class="shelf">
+        </div>
+
+        <div id = "kneex">
+            <select id = "medselect">
+                  <option value="" disabled selected hidden>Choose Medication</option>
+            </select>
+            <input type="number" id = "doseinput" placeholder="#">
+            <button id="plus" onclick="addMed(document.getElementById('medselect').value, document.getElementById('doseinput').value)">+</button>
+        </div>
+
+        <div id = "footer">
+            <a href="index.html" onclick="saveData()">
+               <center>
+                    <img src="assets/calendar.png" class="icon">
+                    <p>Calendar</p>
+                </center>
+            </a>
+            <a href="supps.html" onclick="saveData()">
+                <center>
+                    <img src="assets/pills.png" class="icon">
+                    <p>Supplements</p>
+                </center>
+            </a>
+            <a>
+                <center>
+                    <img src="assets/settings.png" class="icon">
+                    <p>Settings</p>
+                </center>
+            </a>
+        </div>
+
+    </body>
+</html>

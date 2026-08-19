@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Cofactor</string>
+    <string name="title_activity_main">Cofactor</string>
+    <string name="package_name">com.cofactor.app</string>
+    <string name="custom_url_scheme">com.cofactor.app</string>
+</resources>

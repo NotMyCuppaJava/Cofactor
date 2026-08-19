@@ -1,0 +1,220 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    overflow-x: hidden; /* Prevents horizontal scrollbar from 3D rotations */
+    display: flex;
+    flex-direction: column;
+}
+
+#header{
+    position: fixed;
+    width:  100%;
+    height: 100px;
+}
+
+#footer{
+    background-color: #d9d9d9;
+    height:20vh;
+    display:flex;
+}
+
+.icon{
+    width:20vw;
+    height:20vw;
+    margin:6.5vw;
+    margin-bottom:0;
+}
+
+p{
+    margin-top:0;
+}
+
+#rackbody{
+    display:flex;
+    height: calc(65vh - 100px);
+    width: 100%;
+    margin-top:100px;
+    perspective: 1000px;
+
+}
+
+#knee{
+    position:relative;
+    display:flex;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+    text-align:center;
+}
+
+#knee > button{
+    margin:4vh 12vw;
+    height:7vh;
+    width:76vw;
+    left:50%;
+    background-color:#d9d9d9;
+    border-radius: 5px;
+}
+
+#leftcol{
+    flex:1
+}
+#midcol{
+    flex:2
+}
+#rightcol{
+    flex:1
+}
+
+#header > * {
+    position: absolute;
+}
+
+#maintitle {
+    top:  50%;
+    left: 50%;
+    padding: 0;
+    margin: 0;
+    transform: translate(-50%, -50%);
+
+}
+
+h1, h2, h6, p, button{
+    font-family: "Outfit", sans-serif;
+    font-weight: 300;
+    font-style: normal;
+    font-size: 50px;
+}
+
+h6{
+    margin-top:10px;
+    margin-bottom:10px;
+}
+
+.card {
+    height:400px;
+    width:300px;
+    background-color:#d9d9d9;
+    margin:20px 0;
+    border-radius:25px;
+    padding:10px;
+    text-align:center;
+}
+
+
+.column{
+  display: grid;
+  place-items: center;
+}
+
+h6, p{
+    font-size: 40px;
+}
+
+*{
+    --h: calc(65vh - 100px);
+}
+
+.shelf {
+    background:
+        linear-gradient(
+            90deg, 
+            #fff 0 30px, 
+            #d9d9d9 0 calc(30px + var(--h) * 0.02), 
+            #fff0 0 calc(100% - (30px + var(--h) * 0.02)), 
+            #d9d9d9 0 calc(100% - 30px), 
+            #fff 0 100%
+        ), 
+        repeating-linear-gradient(
+            #d9d9d9 0 calc(var(--h) * 0.02), 
+            #292929 0 calc(var(--h) * 0.245)
+        );
+    
+    background-size: 100% 100%, 100% calc(var(--h) * 0.245);
+    background-origin: border-box;
+    background-position: 0 0;
+
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    
+    /* 1. Row height perfectly matches the dark space height */
+    grid-auto-rows: calc(var(--h) * 0.225);
+    
+    /* 2. Vertical gap perfectly matches the light grey shelf thickness */
+    row-gap: calc(var(--h) * 0.02);
+    
+    /* 3. Keep horizontal gap fixed */
+    column-gap: 16px;
+    
+    /* 4. Restore exact mathematical padding to perfectly contain the top shelf */
+    padding: calc(var(--h) * 0.02);
+    
+    align-items: end;
+    justify-items: center;
+}
+
+
+.supplement{
+    --x: calc(var(--h) * 0.27);
+    background-image: url(assets/pillswide.png);
+    height: var(--x);
+    width: var(--x);
+    box-sizing: border-box;
+    background-position: center;
+    background-size: cover;
+    margin: 0 -5vw 0 -5vw;
+    padding: calc(var(--x) * 0.47) calc(var(--x) * 0.25) calc(var(--x) * 0.05) calc(var(--x) * 0.25);
+}
+
+.supplement > p{
+    font-size: calc(var(--x) * 0.10);
+    margin:0;
+}
+
+#rackbodyx{
+    height: calc(65vh - 100px - calc(var(--h) * 0.04));
+    width: calc(100% - calc(var(--h) * 0.04));
+    margin-top:100px;
+    perspective: 1000px;
+
+}
+
+
+#footer{
+    background-color: #d9d9d9;
+    height:20vh;
+    text-align:center;
+}
+
+select{
+    width:70vw;
+    margin:5vh 0;
+    height:5vh;
+    font-size:3vh;
+}
+
+input{
+    width:10vw;
+    margin:5vh 0;
+    height:5vh;
+    font-size:3vh;
+}
+
+#plus{
+    border-radius:1000px;
+    height:10vw;
+    width:10vw;
+    background:none;
+    border:none;
+    font-size:7vw;
+}
+
+#kneex {
+  display: flex;
+  justify-content: center; /* Centers horizontally */
+  align-items: center;     /* Centers vertically */
+}
