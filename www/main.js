@@ -242,15 +242,16 @@ function loadCalendar(){
     console.log(document.getElementById("lcolheader").innerHTML)
 
     var idx = 0
+    const meals = [" (Breakfast)", " (Lunch)", " (Dinner)"]
     for(slot of slots){
         console.log("IDX:", idx)
-        mcolinner = timeToString(slot) + "<br><br>" + medsToString(calendars[today * 3 + idx])
+        mcolinner = timeToString(slot) + meals[idx] + "<br><br>" + medsToString(calendars[today * 3 + idx])
         mcoln = "<div class = 'card'> <p> " + mcolinner + " </p> </div>" 
         mcol.innerHTML += mcoln     
-        lcolinner = timeToString(slot) + "<br><br>" + medsToString(calendars[(today * 3 - 3 + idx + calendars.length) % calendars.length])
+        lcolinner = timeToString(slot) + meals[idx] + "<br><br>" + medsToString(calendars[(today * 3 - 3 + idx + calendars.length) % calendars.length])
         lcoln = "<div class = 'card'> <p> " + lcolinner + " </p> </div>" 
         lcol.innerHTML += lcoln     
-        rcolinner = timeToString(slot) + "<br><br>" + medsToString(calendars[(today * 3 + 3 + idx) % calendars.length])
+        rcolinner = timeToString(slot) + meals[idx] + "<br><br>" + medsToString(calendars[(today * 3 + 3 + idx) % calendars.length])
         rcoln = "<div class = 'card'> <p> " + rcolinner + " </p> </div>" 
         rcol.innerHTML += rcoln     
         idx += 1       
