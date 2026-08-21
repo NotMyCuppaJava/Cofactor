@@ -189,6 +189,7 @@ h6, p{
     margin-top:100px;
     perspective: 1000px;
     padding:50px;
+    margin-bottom:15vh
 }
 
 
@@ -207,7 +208,7 @@ select{
 
 input{
     width:10vw;
-    margin:5vh 0;
+    margin:0 0 0 0;
     height:5vh;
     font-size:3vh;
 }
@@ -221,8 +222,26 @@ input{
     font-size:7vw;
 }
 
+.numbers {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* Vertically centers the text boxes */
+}
+
+
 #kneex {
   display: flex;
   justify-content: center; /* Centers horizontally */
   align-items: center;     /* Centers vertically */
+}
+
+input[type="checkbox"]{
+    height:3vh;
+    margin:0;
+}
+
+.sliders {
+    background-color: #d9d9d9;
+    padding:5px;
+    margin:5vh
 }
