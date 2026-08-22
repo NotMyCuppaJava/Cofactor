@@ -100,13 +100,12 @@ function loadSupps() {
 }
 
 function calculateSchedule(medic, slotz) {
-    const medications = medic || (supps.length > 0 ? supps : [
+    const medications =  [
         new prescription("Iron", 2),
-        new prescription("Folate", 3),
         new prescription("Zinc", 2),
-        new prescription("Potassium", 1),
-        new prescription("Vitamin D3", 1)
-    ]);
+        new prescription("Potassium", 2),
+        new prescription("Omeprazole", 7),
+    ];
 
     const activeSlots = slotz || slots;
     const schedule = [];
