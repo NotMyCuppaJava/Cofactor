@@ -6,107 +6,111 @@ let calendars = [];
 let today = 0;
 let offset = 0;
 
+// Keys match lower-case anchor values from the JSON
+const translatorx = {
+    "breakfast": 0,
+    "lunch": 1,
+    "dinner": 2
+};
+
+const translatory = {
+    "breakfast": 0,
+    "dinner": 1
+};
+
 class prescription {
     constructor (medication, daysperweek) {
-        this.medication = medication
-        this.dpw = daysperweek
+        this.medication = medication;
+        this.dpw = daysperweek;
     }
 }
 
 class timeStamp {
     constructor (day, hour, medication) {
-        this.day = day
-        this.hour = hour
-        this.medication = medication
+        this.day = day;
+        this.hour = hour;
+        this.medication = medication;
     }
 }
 
 function loadData() {
-    const data = localStorage.getItem('info');
-    if (!data) {
+    const localInfo = localStorage.getItem('info');
+    if (!localInfo) {
         console.log("DATA NOT THERE;"); 
-        return
+        return;
     }
-    const info = JSON.parse(data);
-    // Supplements
-    const temp = info.meds
-    for (med of temp) {
-        supps.push(new prescription(med[0], med[1]))
+    const info = JSON.parse(localInfo);
+    if (info.meds) {
+        supps = info.meds.map(med => new prescription(med[0], med[1]));
     }
-    // Slots
-    slots = info.slots
-    console.log("DATA LOADED!")
+    if (info.slots) {
+        slots = info.slots;
+    }
+    console.log("DATA LOADED!");
 }
 
 function saveData() {
-    localStorage.setItem('info',JSON.stringify({
+    localStorage.setItem('info', JSON.stringify({
         slots: slots,
         meds: supps.map(med => [med.medication, med.dpw])
     }));
-    console.log("DATA SAVED!")
+    console.log("DATA SAVED!");
 }
 
 async function loadJSON() {
     try {
-        const response = await fetch("./interaction_matrix.json");
+        const response = await fetch("./interaction.json");
         data = await response.json();
-        console.log(data);
+        console.log("JSON Data:", data);
     } catch (error) {
         console.error("Error loading JSON:", error);
     }   
-    try{
-        populate()
-    }catch{}
+    try {
+        populate();
+    } catch (e) {
+        console.error("Populate error:", e);
+    }
 }
 
-function loadSupps(){
-    if (supps.length == 0){
+function loadSupps() {
+    if (supps.length === 0) {
         supps = [
             new prescription("Iron", 2),
             new prescription("Folate", 3),
             new prescription("Zinc", 2),
             new prescription("Potassium", 1),
             new prescription("Vitamin D3", 1),
-            // new prescription("Calcium", 7),
             new prescription("Magnesium", 4),
             new prescription("Vitamin B12", 3),
             new prescription("Omeprazole", 7)
         ];
     }
     
-    const rackbody = document.getElementById("rackbodyx")
-    rackbody.innerHTML = ""
-    for (med of supps){
-        const suppdiv = document.createElement("div")
-        suppdiv.className = "supplement"
-        const supptext = document.createElement("p")
-        supptext.innerHTML = med.medication + "<br><br> (" + med.dpw + "/week)"
-        suppdiv.appendChild(supptext)
-        rackbody.appendChild(suppdiv)
+    const rackbody = document.getElementById("rackbodyx");
+    if (!rackbody) return;
+    rackbody.innerHTML = "";
+    for (const med of supps) {
+        const suppdiv = document.createElement("div");
+        suppdiv.className = "supplement";
+        const supptext = document.createElement("p");
+        supptext.innerHTML = med.medication + "<br><br> (" + med.dpw + "/week)";
+        suppdiv.appendChild(supptext);
+        rackbody.appendChild(suppdiv);
     }
 }
 
 function calculateSchedule(medic, slotz) {
-    // const medications = [
-    //     new prescription("Iron", 2), 
-    //     new prescription("Folate", 3),
-    //     new prescription("Zinc", 2), 
-    //     new prescription("Potassium", 1)
-    // ];
-    medications = [
+    const medications = medic || (supps.length > 0 ? supps : [
         new prescription("Iron", 2),
         new prescription("Folate", 3),
         new prescription("Zinc", 2),
         new prescription("Potassium", 1),
-        new prescription("Vitamin D3", 1),
-        // new prescription("Calcium", 7),
-        new prescription("Magnesium", 4),
-        new prescription("Vitamin B12", 3),
-        new prescription("Omeprazole", 7)
-    ];
+        new prescription("Vitamin D3", 1)
+    ]);
 
+    const activeSlots = slotz || slots;
     const schedule = [];
-    for (let i = 0; i < 7 * slots.length; i++) {
+    for (let i = 0; i < 7 * activeSlots.length; i++) {
         schedule.push([]);
     }
 
@@ -118,13 +122,11 @@ function calculateSchedule(medic, slotz) {
     }
 
     fillSchedule(queue, schedule);
-    calendars = schedule
+    calendars = schedule;
     return schedule;
 }
 
 function fillSchedule(meds, sched) {
-    console.log("FILLING...")
-
     if (meds.length === 0) {
         return true;
     }
@@ -135,7 +137,7 @@ function fillSchedule(meds, sched) {
     const pslots = [];
     const okslots = [];
 
-    const minbar = Math.floor(sched.length / qcm);
+    const minbar = Math.max(1, Math.floor(sched.length / qcm));
 
     // Flag slots within minbar distance of existing same medication
     for (let i = 0; i < sched.length; i++) {
@@ -147,8 +149,24 @@ function fillSchedule(meds, sched) {
         }
     }
 
+    // Determine target meal anchor safely
+    const rawAnchor = (data && data.anchors && data.anchors[currentmed]) ? data.anchors[currentmed] : "any";
+    const anchor = rawAnchor.toLowerCase();
+
     // Evaluate valid vs cofactor slots
     for (let i = 0; i < sched.length; i++) {
+        if (anchor !== "any") {
+            if (sched.length === 21 && anchor in translatorx) {
+                if (i % 3 !== translatorx[anchor]) {
+                    continue;
+                }
+            } else if (sched.length === 14 && anchor in translatory) {
+                if (i % 2 !== translatory[anchor]) {
+                    continue;
+                }
+            }
+        }
+
         const isBad = badslots.has(i);
         let isCofactor = false;
         let isValid = !isBad; 
@@ -169,10 +187,9 @@ function fillSchedule(meds, sched) {
         }
     }
 
-    const newqueue = [...meds];
-    newqueue.shift();
-    shuffle(pslots)
-    shuffle(okslots)
+    const newqueue = meds.slice(1);
+    shuffle(pslots);
+    shuffle(okslots);
 
     for (const p of pslots) {
         sched[p].push(currentmed);
@@ -190,8 +207,10 @@ function fillSchedule(meds, sched) {
 }
 
 function getInteraction(med1, med2) {
+    if (!data || !data.items || !data.matrix) return 0;
     const rxID1 = data.items.indexOf(med1);
     const rxID2 = data.items.indexOf(med2);
+    if (rxID1 === -1 || rxID2 === -1) return 0;
     return data.matrix[rxID1][rxID2];
 }
 
@@ -203,97 +222,86 @@ function shuffle(array) {
     return array;
 }
 
-
-async function startup(){
-    // await loadData(); 
+async function startup() {
+    loadData();
+    loadSupps();
     await loadJSON();
-    await calculateSchedule(null, slots)
-    loadCalendar()
+    calculateSchedule(supps, slots);
+    loadCalendar();
 }
 
-function loadCalendar(){
-    console.log("LOADING CALENDAR...")
-     // Day of the week. 0 is sunday, 1 is monday, 6 is saturday
-    const lcol = document.getElementById("lcol")
-    const mcol = document.getElementById("mcol")
-    const rcol = document.getElementById("rcol")
+function loadCalendar() {
+    const lcol = document.getElementById("lcol");
+    const mcol = document.getElementById("mcol");
+    const rcol = document.getElementById("rcol");
     
-    for (elem of [lcol,mcol,rcol]){
-        elem.innerHTML = ""
+    for (const elem of [lcol, mcol, rcol]) {
+        if (elem) elem.innerHTML = "";
     }
 
     const now = new Date(); 
     now.setDate(now.getDate() + offset); 
 
     today = now.getDay();
-    console.log("GOT TODAY", today)
 
-    document.getElementById("lcol").innerHTML = "<h6 id = 'lcolheader'> Monday 8/7 </h6>"
-    document.getElementById("mcol").innerHTML = "<h6 id = 'mcolheader'> Monday 8/7 </h6>"
-    document.getElementById("rcol").innerHTML = "<h6 id = 'rcolheader'> Monday 8/7 </h6>"
-
-
-
+    if (lcol) lcol.innerHTML = "<h6 id='lcolheader'></h6>";
+    if (mcol) mcol.innerHTML = "<h6 id='mcolheader'></h6>";
+    if (rcol) rcol.innerHTML = "<h6 id='rcolheader'></h6>";
 
     document.getElementById("lcolheader").innerHTML = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1).toLocaleDateString('en-US', { weekday: 'long', month: 'numeric', day: 'numeric' });
     document.getElementById("mcolheader").innerHTML = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toLocaleDateString('en-US', { weekday: 'long', month: 'numeric', day: 'numeric' });
     document.getElementById("rcolheader").innerHTML = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).toLocaleDateString('en-US', { weekday: 'long', month: 'numeric', day: 'numeric' });
-    console.log("LOADING DATE...")
-    console.log(document.getElementById("lcolheader").innerHTML)
 
-    var idx = 0
-    const meals = [" (Breakfast)", " (Lunch)", " (Dinner)"]
-    for(slot of slots){
-        console.log("IDX:", idx)
-        mcolinner = timeToString(slot) + meals[idx] + "<br><br>" + medsToString(calendars[today * 3 + idx])
-        mcoln = "<div class = 'card'> <p> " + mcolinner + " </p> </div>" 
-        mcol.innerHTML += mcoln     
-        lcolinner = timeToString(slot) + meals[idx] + "<br><br>" + medsToString(calendars[(today * 3 - 3 + idx + calendars.length) % calendars.length])
-        lcoln = "<div class = 'card'> <p> " + lcolinner + " </p> </div>" 
-        lcol.innerHTML += lcoln     
-        rcolinner = timeToString(slot) + meals[idx] + "<br><br>" + medsToString(calendars[(today * 3 + 3 + idx) % calendars.length])
-        rcoln = "<div class = 'card'> <p> " + rcolinner + " </p> </div>" 
-        rcol.innerHTML += rcoln     
-        idx += 1       
-    }
-}
-
-function timeToString(time){
-    hrs = Math.floor(time)
-    mins = Math.floor((time - hrs) * 60)
-    if (hrs > 12){
-        hrs -= 12
-        return hrs + ":" + (mins < 10 ? "0" : "") + mins + "PM"
-    }
-    else{
-        return hrs + ":" + (mins < 10 ? "0" : "") + mins + "AM"
-    }
-}
-
-function medsToString(meds){
-    if (meds){
-        stringle = ""
-        for (med of meds){
-            stringle += med
-            stringle += "<br>"
+    let idx = 0;
+    const meals = [" (Breakfast)", " (Lunch)", " (Dinner)"];
+    for (const slot of slots) {
+        if (mcol) {
+            const mcolinner = timeToString(slot) + meals[idx] + "<br><br>" + medsToString(calendars[today * 3 + idx]);
+            mcol.innerHTML += "<div class='card'> <p> " + mcolinner + " </p> </div>";
         }
-        return stringle
+        if (lcol) {
+            const lcolinner = timeToString(slot) + meals[idx] + "<br><br>" + medsToString(calendars[(today * 3 - 3 + idx + calendars.length) % calendars.length]);
+            lcol.innerHTML += "<div class='card'> <p> " + lcolinner + " </p> </div>";
+        }
+        if (rcol) {
+            const rcolinner = timeToString(slot) + meals[idx] + "<br><br>" + medsToString(calendars[(today * 3 + 3 + idx) % calendars.length]);
+            rcol.innerHTML += "<div class='card'> <p> " + rcolinner + " </p> </div>";
+        }
+        idx += 1;
     }
 }
 
-function populate(){
-    console.log("loading select")
-    const select = document.getElementById("medselect")
-    select.innerHTML = "<option value='' disabled selected hidden>Choose Medication</option>"
-    for (medication of data.items){
-        select.innerHTML += "<option value='" + medication + "'>" + medication + "</option>"
+function timeToString(time) {
+    let hrs = Math.floor(time);
+    const mins = Math.floor((time - hrs) * 60);
+    const period = hrs >= 12 ? "PM" : "AM";
+    if (hrs > 12) hrs -= 12;
+    if (hrs === 0) hrs = 12;
+    return hrs + ":" + (mins < 10 ? "0" : "") + mins + period;
+}
+
+function medsToString(meds) {
+    if (meds && meds.length > 0) {
+        let stringle = "";
+        for (const med of meds) {
+            stringle += med + "<br>";
+        }
+        return stringle;
+    }
+    return "";
+}
+
+function populate() {
+    const select = document.getElementById("medselect");
+    if (!select || !data || !data.items) return;
+    select.innerHTML = "<option value='' disabled selected hidden>Choose Medication</option>";
+    for (const medication of data.items) {
+        select.innerHTML += "<option value='" + medication + "'>" + medication + "</option>";
     } 
 }
 
-function addMed(med, num){
-    supps.push(
-        new prescription(med, parseInt(num))
-    )
-    loadSupps()
-    saveData()
+function addMed(med, num) {
+    supps.push(new prescription(med, parseInt(num)));
+    loadSupps();
+    saveData();
 }
