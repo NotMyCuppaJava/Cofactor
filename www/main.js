@@ -1,8 +1,8 @@
 let data;
 let sampleData;
 let supps = [];
-let slots = [7.5, 12, 20];
-let calendars = [];
+let slots = []; // A list of tuples [start, end] with the same 0 to 168 convention
+let calendars = []; // List of prescription object
 let today = 0;
 let offset = 0;
 
@@ -26,9 +26,8 @@ class prescription {
 }
 
 class timeStamp {
-    constructor (day, hour, medication) {
-        this.day = day;
-        this.hour = hour;
+    constructor (hour, medication) {
+        this.hours = hour; // This ranges from 0 on monday midnight to 168 on sunday midnight
         this.medication = medication;
     }
 }
