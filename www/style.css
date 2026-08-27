@@ -245,3 +245,7 @@ input[type="checkbox"]{
     padding:5px;
     margin:5vh
 }
+
+#canvascontainer{
+    height:50vw;
+}
