@@ -2,7 +2,13 @@ let data;
 let sampleData;
 let supps = [];
 let slots = []; // A list of tuples [start, end] with the same 0 to 168 convention
-let calendars = []; // List of prescription object
+calendars = [
+    { hours: 8, medication: "Iron" },        
+    { hours: 12.5, medication: "Zinc" },        
+    { hours: 32, medication: "Omeprazole" }, 
+    { hours: 44, medication: "Vitamin D3" },   
+    { hours: 56, medication: "Magnesium" } // we're not doing the perscription class vro
+];
 let today = 0;
 let offset = 0;
 
@@ -227,48 +233,64 @@ async function startup() {
     calculateSchedule(supps, slots);
     loadCalendar();
 }
-
 function loadCalendar() {
-    const lcol = document.getElementById("lcol");
-    const mcol = document.getElementById("mcol");
-    const rcol = document.getElementById("rcol");
+    calendars = [
+        new timeStamp(56, "Magnesium"),
+        new timeStamp(80, "Iron"),
+        new timeStamp(92, "Zinc"),
+        new timeStamp(104, "Vitamin D3")
+    ]
+
+    let c = [document.getElementById("lcol"), document.getElementById("mcol"), document.getElementById("rcol")]
     
-    for (const elem of [lcol, mcol, rcol]) {
-        if (elem) elem.innerHTML = "";
+    for (let kiwi of c) {
+        if (kiwi) {
+            kiwi.innerHTML = ""
+            kiwi.style.position = "relative"
+            kiwi.style.height = "80vh"
+        }
     }
 
-    const now = new Date(); 
-    now.setDate(now.getDate() + offset); 
+    const n = new Date()
+    n.setDate(n.getDate() + offset)
+    
+    let j = n.getDay() 
+    let b = (j + 6) % 7
 
-    today = now.getDay();
+    let w = "<div style='position:absolute; top:40px; bottom:30px; left:50%; width:4px; background:grey; transform:translateX(-50%); border-radius:2px;'></div>"
+    
+    let t = [(b - 1 + 7) % 7, b, (b + 1) % 7]
+    let h = ["lcolheader", "mcolheader", "rcolheader"]
 
-    if (lcol) lcol.innerHTML = "<h6 id='lcolheader'></h6>";
-    if (mcol) mcol.innerHTML = "<h6 id='mcolheader'></h6>";
-    if (rcol) rcol.innerHTML = "<h6 id='rcolheader'></h6>";
-
-    document.getElementById("lcolheader").innerHTML = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1).toLocaleDateString('en-US', { weekday: 'long', month: 'numeric', day: 'numeric' });
-    document.getElementById("mcolheader").innerHTML = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toLocaleDateString('en-US', { weekday: 'long', month: 'numeric', day: 'numeric' });
-    document.getElementById("rcolheader").innerHTML = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).toLocaleDateString('en-US', { weekday: 'long', month: 'numeric', day: 'numeric' });
-
-    let idx = 0;
-    const meals = [" (Breakfast)", " (Lunch)", " (Dinner)"];
-    for (const slot of slots) {
-        if (mcol) {
-            const mcolinner = timeToString(slot) + meals[idx] + "<br><br>" + medsToString(calendars[today * 3 + idx]);
-            mcol.innerHTML += "<div class='card'> <p> " + mcolinner + " </p> </div>";
+    for (let i = 0; i < 3; i++) {
+        if (c[i]) {
+            c[i].innerHTML = "<h6 id='" + h[i] + "' style='position:absolute; top:0; left:0; width:100%; text-align:center; margin:0; font-size:18px;'></h6>" + w
+            let d = new Date(n.getFullYear(), n.getMonth(), n.getDate() + (i - 1))
+            document.getElementById(h[i]).innerHTML = d.toLocaleDateString('en-US', { weekday: 'long', month: 'numeric', day: 'numeric' })
         }
-        if (lcol) {
-            const lcolinner = timeToString(slot) + meals[idx] + "<br><br>" + medsToString(calendars[(today * 3 - 3 + idx + calendars.length) % calendars.length]);
-            lcol.innerHTML += "<div class='card'> <p> " + lcolinner + " </p> </div>";
+    }
+
+    for (let mango of calendars) {
+        if (!mango || mango.hours == undefined) {
+            continue
         }
-        if (rcol) {
-            const rcolinner = timeToString(slot) + meals[idx] + "<br><br>" + medsToString(calendars[(today * 3 + 3 + idx) % calendars.length]);
-            rcol.innerHTML += "<div class='card'> <p> " + rcolinner + " </p> </div>";
+
+        let x = Math.floor(mango.hours / 24)
+        let y = mango.hours % 24
+        let z = t.indexOf(x)
+
+        if (z !== -1 && c[z] !== null) {
+            let p = 10 + (((y - 7) / 16) * 80)
+
+            let html = "<div style='position:absolute; top:" + p + "%; left:50%; transform:translate(-50%, -50%); display:flex; align-items:center; background:#fff; white-space:nowrap; padding:6px 10px; border-radius:6px; box-shadow:0 2px 4px rgba(0,0,0,0.1); z-index:10;'>"
+            html += "<span style='width:16px; height:16px; background:blue; border-radius:50%; margin-right:8px; flex-shrink:0;'></span>"
+            html += "<span style='font-size:18px; line-height:1.2;'><b>" + timeToString(y) + "</b>:<br>" + mango.medication + "</span>"
+            html += "</div>"
+
+            c[z].innerHTML += html
         }
-        idx += 1;
     }
 }
-
 function timeToString(time) {
     let hrs = Math.floor(time);
     const mins = Math.floor((time - hrs) * 60);
