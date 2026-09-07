@@ -29,7 +29,7 @@ function getFactor(suppA, suppB){
     substance_b = suppB.toLowerCase()
 
     try{
-        return factors[substance_a][substance_b]
+        return factors[substance_a][substance_b] ?? 0
     } catch{
         return 0
     }  
