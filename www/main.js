@@ -112,11 +112,8 @@ function calculateSchedule(medic, slotz) {
         new prescription("Omeprazole", 7),
     ];
 
-    const activeSlots = slotz || slots;
+    const activeSlots = slotz;
     const schedule = [];
-    for (let i = 0; i < 7 * activeSlots.length; i++) {
-        schedule.push([]);
-    }
 
     const queue = [];
     for (const med of medications) {
