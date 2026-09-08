@@ -249,3 +249,31 @@ input[type="checkbox"]{
 #canvascontainer{
     height:50vw;
 }
+
+.card-box{
+    width: auto;
+    margin: 2vh 0;
+    padding: 5%;
+    background-color:#d9d9d9
+}
+
+.card-box > input{
+    width: 100%;
+}
+
+.checkbox{
+    display: flex;
+    align-items: center; /* This perfectly centers them vertically */
+    gap: 8px;
+}
+
+.timebase {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* Optional: aligns items vertically in the middle */
+}
+
+.timebase > p{
+    margin: 0;
+    padding: 0;
+}

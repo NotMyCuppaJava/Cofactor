@@ -152,4 +152,6 @@ function generateSchedule(slots, meds){
     for (row of actual){
         console.log(row)
     }
+
+    return actual
 }

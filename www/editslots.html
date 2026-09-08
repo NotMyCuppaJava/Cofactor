@@ -10,29 +10,29 @@
 
     </head>
     <body onload = "">
-        <!-- loadData();makeSchedule([7.5, 12.0, 20.0]) -->
-        <!-- <script src="main.js"></script> -->
-        <script src="https://cdn.jsdelivr.net/npm/p5@2.3.1/lib/p5.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/p5.sound@0.4.1/dist/p5.sound.min.js"></script>
+        <script src = "sched.js"></script>
         <script>
-            async function setup() {
-                console.log("STARTING UP")
-                let c = createCanvas(windowWidth - 100, windowHeight*0.5)
-                c.parent("canvascontainer")
-                background(240)
-            }
+            function setSlots() {
+                const checkbox = document.getElementById("lunchbox")
+                let breakv = parseInt(document.getElementById("brekky").value)
+                let lunchv = parseInt(document.getElementById("lunch").value)
+                let dinv = parseInt(document.getElementById("dinner").value)
+                let slots = checkbox.checked ? [breakv, lunchv, dinv] : [breakv, dinv]
+                localStorage.setItem("slots", JSON.stringify(slots));
+                try{
+                    let medications = JSON.parse(localStorage.getItem("meds"))
+                    let calendar = generateSchedule(slots, medications)
+                    localStorage.setItem("schedule", JSON.stringify(calendar));
+                } catch (e) {
+                    console.log("There was an issue generating the schedule.", e)
+                }
+                
+                window.location.href='index.html';
+                startup()
 
-            function windowResized() {
-                existing = document.getElementById("canvascontainer")
-                const canvWidth = existing.offsetWidth
-                const canvHeight = windowHeight * 0.5
-
-                // Automatically recalculates canvas size on window resize
-                resizeCanvas(canvWidth, canvHeight);
-                background(240); // Clear or redraw elements after resize
-                rect(canvWidth/2 - 10, 5, 20, canvHeight - 10)
             }
         </script>
+    
 
         <div id = "header">
             <img src="assets/Cofactor.png" style="width:75px;height:75px;margin:12.5px">
@@ -41,12 +41,38 @@
 
         <div id = "rackbodyy">
             <p>Most medications are taken either early in the morning or with dinner. Supplements should be taken along with them. You can also opt to take some supplements with lunch if that fits with your schedule.</p>
-            <div id="canvascontainer"></div>
+            <div class = "card-box">
+                <h6>Breakfast</h6>
+                <input type="range" min="6" max="12" id = "brekky">
+                <div class="timebase">
+                    <p>6AM</p>
+                    <p>9AM</p>
+                    <p>12PM</p>
+                </div>
+            </div>
+            <div class = "card-box">
+                <h6 class = "checkbox">Lunch <input id = "lunchbox" type="checkbox"></h6>
+                <input type="range" min = "10" max = "14" id = "lunch">
+                <div class="timebase">
+                    <p>10AM</p>
+                    <p>12PM</p>
+                    <p>2PM</p>
+                </div>
+            </div>
+            <div class = "card-box">
+                <h6>Dinner</h6>
+                <input type="range" min="12" max="24" id = "dinner">
+                <div class="timebase">
+                    <p>12PM</p>
+                    <p>6PM</p>
+                    <p>12AM</p>
+                </div>
+            </div>
         </div>
 
         <div id = "knee">
             <button onclick="window.location.href='index.html';startup()">Discard Changes</button>
-            <button>Save Changes</button>
+            <button onclick="setSlots()">Save Changes</button>
         </div>
 
         <div id = "footerx">
