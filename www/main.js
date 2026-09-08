@@ -77,33 +77,6 @@ async function loadJSON() {
     }
 }
 
-function loadSupps() {
-    if (supps.length === 0) {
-        supps = [
-            new prescription("Iron", 2),
-            new prescription("Folate", 3),
-            new prescription("Zinc", 2),
-            new prescription("Potassium", 1),
-            new prescription("Vitamin D3", 1),
-            new prescription("Magnesium", 4),
-            new prescription("Vitamin B12", 3),
-            new prescription("Omeprazole", 7)
-        ];
-    }
-    
-    const rackbody = document.getElementById("rackbodyx");
-    if (!rackbody) return;
-    rackbody.innerHTML = "";
-    for (const med of supps) {
-        const suppdiv = document.createElement("div");
-        suppdiv.className = "supplement";
-        const supptext = document.createElement("p");
-        supptext.innerHTML = med.medication + "<br><br> (" + med.dpw + "/week)";
-        suppdiv.appendChild(supptext);
-        rackbody.appendChild(suppdiv);
-    }
-}
-
 function calculateSchedule(medic, slotz) {
     const medications =  [
         new prescription("Iron", 2),
@@ -230,6 +203,7 @@ async function startup() {
     calculateSchedule(supps, slots);
     loadCalendar();
 }
+
 function loadCalendar() {
     calendars = [
         new timeStamp(56, "Magnesium"),

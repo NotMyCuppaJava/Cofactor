@@ -11,6 +11,23 @@
     <body onload = "loadData(); loadJSON(); loadSupps(); populate()">
         <!-- loadData();makeSchedule([7.5, 12.0, 20.0]) -->
         <script src="main.js"></script>
+        <script>
+            function loadSupps() {
+                supps = JSON.parse(localStorage.getItem("meds"))
+    
+                const rackbody = document.getElementById("rackbodyx");
+                if (!rackbody) return;
+                rackbody.innerHTML = "";
+                for (const med of supps) {
+                    const suppdiv = document.createElement("div");
+                    suppdiv.className = "supplement";
+                    const supptext = document.createElement("p");
+                    supptext.innerHTML = med[0] + "<br><br> (" + med[1] + "/week)";
+                    suppdiv.appendChild(supptext);
+                    rackbody.appendChild(suppdiv);
+                }
+            }
+        </script>
 
         <div id = "header">
             <img src="assets/Cofactor.png" style="width:75px;height:75px;margin:12.5px">
