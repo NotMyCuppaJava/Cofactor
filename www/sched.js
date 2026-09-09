@@ -1,157 +1,148 @@
 let factors = {};
 
-function partition_seven(n){
-    output = Array(7).fill(0)
-    jump = 7 / n
-    for(i=0;i<n;i++){
-        output[Math.trunc(i * jump)] += 1
+function partition_seven(n) {
+    if (n <= 0) return Array(7).fill(0);
+    const output = Array(7).fill(0);
+    const jump = 7 / n;
+    for (let i = 0; i < n; i++) {
+        output[Math.trunc(i * jump)] += 1;
     }
-    return output
+    return output;
 }
 
 async function loadJSON() {
     try {
         const response = await fetch("./interaction_matrix.json");
         factors = await response.json();
-        console.log("JSON Data:", factors);
     } catch (error) {
         console.error("Error loading JSON:", error);
     }   
 }
 
-function getFactor(suppA, suppB){
-    if (typeof suppA !== 'string') console.log("suppA is weird:", suppA);
-    if (typeof suppB !== 'string') console.log("suppB is weird:", suppB);
-
+function getFactor(suppA, suppB) {
     if (typeof suppA !== 'string' || typeof suppB !== 'string') return 0;
 
-    substance_a = suppA.toLowerCase()
-    substance_b = suppB.toLowerCase()
+    const substance_a = suppA.toLowerCase();
+    const substance_b = suppB.toLowerCase();
 
-    try{
-        return factors[substance_a][substance_b] ?? 0
-    } catch{
-        return 0
+    try {
+        return factors[substance_a]?.[substance_b] ?? 0;
+    } catch {
+        return 0;
     }  
 }
 
-function daysFromMeds(meds){
-    calendar = Array.from({length: 7}, () => []);
+function daysFromMeds(meds) {
+    const calendar = Array.from({length: 7}, () => []);
 
-    for (med of meds) {
-        // Step 1: Construct the array that gets glued on to the other one
-        augment = Array.from({length: 7}, () => []);
-        no = med[1]
-        supp = med[0]
+    for (const med of meds) {
+        let augment = Array.from({length: 7}, () => []);
+        const supp = med[0];
+        const no = med[1];
 
-        x = partition_seven(no)
+        const x = partition_seven(no);
 
-        for(idx=0;idx<7;idx++){
-            augment[idx] = [...augment[idx], ...Array(x[idx]).fill(supp)]
+        for (let idx = 0; idx < 7; idx++) {
+            augment[idx] = [...augment[idx], ...Array(x[idx]).fill(supp)];
         }
 
-        bestidx = 0
-        bestscore = Infinity
+        let bestidx = 0;
+        let bestscore = Infinity;
 
-        // Step 2: Find the best shift to place the new augmentation on
-        for(let i=0;i<7;i++){
-            inconvenience = 0
-            for(let j=0;j<7;j++){
-                issue = 0
-                for(item of calendar[j]){
-                  issue += getFactor(supp, item)
+        for (let i = 0; i < 7; i++) {
+            let inconvenience = 0;
+            for (let j = 0; j < 7; j++) {
+                let issue = 0;
+                for (const item of calendar[j]) {
+                    issue += getFactor(supp, item);
                 }
-                inconvenience += issue * augment[(j - i + 7) % 7].length
+                inconvenience += issue * augment[(j - i + 7) % 7].length;
             }
-            if (inconvenience < bestscore){
-              bestscore = inconvenience
-              bestidx = i
-            }
-        }
-
-        // Step 3: Actually tack it on
-        augment = [...augment.slice(bestidx), ...augment.slice(0, bestidx)]
-        for (i=0;i<7;i++){
-            calendar[i] = [...calendar[i], ...augment[i]]
-        }
-    }
-    return calendar
-}
-
-function fillDay(medications, slots){
-  daySchedule = {}
-  for(slot of slots){
-    daySchedule[slot] = []
-  }
-  [s, sch] = populateSlots(daySchedule, medications, slots)
-  return sch
-}
-
-function populateSlots(currentDay, medications, slots){
-    if (medications.length == 0) {
-        return [scoreDay(currentDay), structuredClone(currentDay)]
-    }
-
-    let best_score = -Infinity
-    let best_schedule = null
-    let current = medications[0]
-
-    for (let key in currentDay){
-        currentDay[key].push(current)
-
-        let [score, schedule] = populateSlots(currentDay, medications.slice(1), slots)
-
-        currentDay[key].pop()
-
-        if(score > best_score){
-            best_score = score
-            best_schedule = schedule
-        }
-    }
-    return [best_score, best_schedule]
-}
-
-function scoreDay(currentDay){
-    let score = 0
-    converted = []
-    for(key in currentDay){
-        for(item of currentDay[key]){
-            converted.push([item, key])
-        }
-    }
-    // The above converts the dictionary into a more readable format:
-    // (Iron, 5), (Calcium, 6), (Blah, 12)
-
-    for(let i=0;i<converted.length;i++){
-        let current = 1
-        for(let j=0;j<converted.length;j++){
-            if(i==j){
-                continue
-            }else{
-                current *= (1 - getFactor(converted[i][0], converted[j][0]) * Math.exp(0 - Math.abs(converted[i][1] - converted[j][1]) * 0.9))
+            if (inconvenience < bestscore) {
+                bestscore = inconvenience;
+                bestidx = i;
             }
         }
-        score += current / converted.length
-    }
 
-    return score
+        const shift = (7 - (bestidx % 7)) % 7;
+        augment = [...augment.slice(shift), ...augment.slice(0, shift)];
+
+        for (let i = 0; i < 7; i++) {
+            calendar[i] = [...calendar[i], ...augment[i]];
+        }
+    }
+    return calendar;
 }
 
-function generateSchedule(slots, meds){
-    actual = []
-    // slots = [6, 7, 8, 22]
-    // meds = [("Iron", 7), ("Calcium", 5), ("Vitamin C", 3)]
+function fillDay(medications, slots) {
+    const daySchedule = {};
+    for (const slot of slots) {
+        daySchedule[slot] = [];
+    }
+    const [s, sch] = populateSlots(daySchedule, medications, slots);
+    return sch;
+}
 
-
-    calendar = daysFromMeds(meds)
-
-    for (day of calendar){
-        actual.push(fillDay(day, slots))
+function populateSlots(currentDay, medications, slots) {
+    if (medications.length === 0) {
+        return [scoreDay(currentDay), structuredClone(currentDay)];
     }
 
-    for (row of actual){
-        console.log(row)
+    let best_score = -Infinity;
+    let best_schedule = null;
+    const current = medications[0];
+
+    for (const key in currentDay) {
+        if (currentDay[key].includes(current)) continue; // This is actually a temporary fix
+        currentDay[key].push(current);
+
+        const [score, schedule] = populateSlots(currentDay, medications.slice(1), slots);
+
+        currentDay[key].pop();
+
+        if (score > best_score) {
+            best_score = score;
+            best_schedule = schedule;
+        }
+    }
+    return [best_score, best_schedule];
+}
+
+function scoreDay(currentDay) {
+    const converted = [];
+    for (const key in currentDay) {
+        for (const item of currentDay[key]) {
+            converted.push([item, Number(key)]);
+        }
     }
 
-    return actual
+    if (converted.length === 0) return 0;
+
+    let score = 0;
+    for (let i = 0; i < converted.length; i++) {
+        let current = 1;
+        for (let j = 0; j < converted.length; j++) {
+            if (i !== j) {
+                current *= (1 - getFactor(converted[i][0], converted[j][0]) * Math.exp(-Math.abs(converted[i][1] - converted[j][1]) * 0.9));
+            }
+        }
+        score += current / converted.length;
+    }
+
+    return score;
+}
+
+function generateSchedule(slots, meds) {
+    const actual = [];
+    const calendar = daysFromMeds(meds);
+
+    for (const day of calendar) {
+        actual.push(fillDay(day, slots));
+    }
+
+    for (const row of actual) {
+        console.log(row);
+    }
+
+    return actual;
 }

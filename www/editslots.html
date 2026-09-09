@@ -12,13 +12,15 @@
     <body onload = "">
         <script src = "sched.js"></script>
         <script>
-            function setSlots() {
+            async function setSlots() {
                 const checkbox = document.getElementById("lunchbox")
                 let breakv = parseInt(document.getElementById("brekky").value)
                 let lunchv = parseInt(document.getElementById("lunch").value)
                 let dinv = parseInt(document.getElementById("dinner").value)
                 let slots = checkbox.checked ? [breakv, lunchv, dinv] : [breakv, dinv]
                 localStorage.setItem("slots", JSON.stringify(slots));
+
+                await loadJSON()
                 try{
                     let medications = JSON.parse(localStorage.getItem("meds"))
                     let calendar = generateSchedule(slots, medications)
@@ -27,6 +29,7 @@
                     console.log("There was an issue generating the schedule.", e)
                 }
                 
+
                 window.location.href='index.html';
                 startup()
 
