@@ -8,7 +8,7 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
     </head>
-    <body onload = "renderSchedule()">
+    <body onload = "renderSchedule();boot()">
         <script src="sched.js"></script>
         <script>
 
@@ -70,6 +70,66 @@
                 midCol.innerHTML = mcolstring
                 rightCol.innerHTML = rcolstring
 
+            }
+
+            function swipeDetect(el, callback){
+                var touchSurface = el,
+                swipeDir,
+                startX,
+                startY,
+                distX,
+                distY,
+                threshold=150,
+                restraint=100,
+                allowedTime=300,
+                elapsedTime,
+                startTime,
+                handleSwipe = callback || function(swipeDir){}
+
+                touchSurface.addEventListener('touchstart', function(e){
+                    var touchObj = e.changedTouches[0]
+                    swipeDir = 'none'
+                    dist = 0
+                    startX = touchObj.pageX
+                    startY = touchObj.pageY
+                    startTime = new Date().getTime()
+                    e.preventDefault()
+                }, false)
+
+                touchSurface.addEventListener('touchmove', function(e){
+                    e.preventDefault()
+                })
+
+                touchSurface.addEventListener('touchend', function(e){
+                    var touchobj = e.changedTouches[0]
+                    distX = touchobj.pageX - startX
+                    distY = touchobj.pageY - startY
+                    elapsedTime = new Date().getTime() - startTime
+                    if (elapsedTime <= allowedTime){
+                        if (Math.abs(distX) >= threshold && Math.abs(distY) <= restraint){
+                            swipeDir = (distX < 0) ? 'left' : 'right'
+                        }
+                        else if (Math.abs(distX) <= restraint && Math.abs(distY) >= threshold){
+                            swipeDir = (distY < 0) ? 'up' : 'down'
+                        }
+                    }
+                    console.log("Swipe! ", swipeDir)
+                    handleSwipe(swipeDir);
+                }, false)
+            }
+
+            function boot(){
+                let rack = document.getElementById("rackbody")
+                swipeDetect(rack, function(swipeDir){
+                    if (swipeDir == 'left'){
+                        offset += 1
+                        renderSchedule()
+                    }
+                    else if (swipeDir == 'right'){
+                        offset -= 1
+                        renderSchedule()
+                    }
+                })
             }
         </script>
 
