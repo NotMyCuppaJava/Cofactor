@@ -8,10 +8,19 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
     </head>
-    <body onload = "loadData(); loadJSON(); loadSupps(); populate()">
+    <body onload = "loadSupps(); populate()">
         <!-- loadData();makeSchedule([7.5, 12.0, 20.0]) -->
         <script src="main.js"></script>
         <script>
+            function populate() {
+                const select = document.getElementById("medselect");
+                if (!select || !data || !data.items) return;
+                select.innerHTML = "<option value='' disabled selected hidden>Choose Medication</option>";
+                for (const medication of data.items) {
+                    select.innerHTML += "<option value='" + medication + "'>" + medication + "</option>";
+                } 
+            }
+            
             function loadSupps() {
                 supps = JSON.parse(localStorage.getItem("meds"))
     

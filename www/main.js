@@ -282,14 +282,7 @@ function medsToString(meds) {
     return "";
 }
 
-function populate() {
-    const select = document.getElementById("medselect");
-    if (!select || !data || !data.items) return;
-    select.innerHTML = "<option value='' disabled selected hidden>Choose Medication</option>";
-    for (const medication of data.items) {
-        select.innerHTML += "<option value='" + medication + "'>" + medication + "</option>";
-    } 
-}
+
 
 function addMed(med, num) {
     supps.push(new prescription(med, parseInt(num)));
