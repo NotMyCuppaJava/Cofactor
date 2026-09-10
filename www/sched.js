@@ -107,13 +107,21 @@ function populateSlots(currentDay, medications, slots) {
     }
     return [best_score, best_schedule];
 }
-
 function scoreDay(currentDay) {
     const converted = [];
+    let slotIndex = 0;
+
     for (const key in currentDay) {
-        for (const item of currentDay[key]) {
-            converted.push([item, Number(key)]);
+        // Extract numeric hour if available (e.g., "8AM" -> 8), or fallback to sequential slot index
+        let numVal = parseFloat(key);
+        if (isNaN(numVal)) {
+            numVal = slotIndex;
         }
+
+        for (const item of currentDay[key]) {
+            converted.push([item, numVal]);
+        }
+        slotIndex++;
     }
 
     if (converted.length === 0) return 0;
@@ -123,7 +131,9 @@ function scoreDay(currentDay) {
         let current = 1;
         for (let j = 0; j < converted.length; j++) {
             if (i !== j) {
-                current *= (1 - getFactor(converted[i][0], converted[j][0]) * Math.exp(-Math.abs(converted[i][1] - converted[j][1]) * 0.9));
+                const factor = getFactor(converted[i][0], converted[j][0]);
+                const diff = Math.abs(converted[i][1] - converted[j][1]);
+                current *= (1 - factor * Math.exp(-diff * 0.9));
             }
         }
         score += current / converted.length;
@@ -131,7 +141,6 @@ function scoreDay(currentDay) {
 
     return score;
 }
-
 function generateSchedule(slots, meds) {
     const actual = [];
     const calendar = daysFromMeds(meds);

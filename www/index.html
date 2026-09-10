@@ -8,130 +8,133 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
     </head>
-    <body onload = "renderSchedule();boot()">
-        <script src="sched.js"></script>
-        <script>
+<body onload="initCalendar(); boot();">
+            <script src="sched.js"></script>
+<script>
+    let offset = 0;
 
-            offset = 0
+    async function initCalendar() {
+        if (typeof loadJSON === "function") {
+            try { await loadJSON(); } catch (e) { console.warn(e); }
+        }
 
-            function renderSchedule() {
-                const daysoftheweek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-                let schedule = JSON.parse(localStorage.getItem("schedule"))
+        const savedMeds = localStorage.getItem("meds");
+        const meds = savedMeds ? JSON.parse(savedMeds) : [];
 
-                if (!schedule) {
-                    console.log("No schedule found in local storage.")
-                    return
-                }
-                const leftCol = document.getElementById("lcol")
-                const midCol = document.getElementById("mcol")
-                const rightCol = document.getElementById("rcol")
+        // Pull custom slots from localStorage
+        const savedSlots = localStorage.getItem("slots");
+        const slots = savedSlots ? JSON.parse(savedSlots) : ["8AM", "12PM", "8PM"];
 
-                lcolstring = ""
-                mcolstring = ""
-                rcolstring = ""
+        if (meds.length > 0 && typeof generateSchedule === "function") {
+            const calculatedSchedule = generateSchedule(slots, meds);
+            localStorage.setItem("schedule", JSON.stringify(calculatedSchedule));
+        }
 
-                today = new Date().getDay();
+        renderSchedule();
+    }
 
-                lcolidx = ((today + offset - 1) % 7 + 7) % 7
-                mcolidx = ((today + offset) % 7 + 7) % 7
-                rcolidx = ((today + offset + 1) % 7 + 7) % 7
+    function renderSchedule() {
+        const daysoftheweek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        let schedule = JSON.parse(localStorage.getItem("schedule"));
 
-                lcolstring += '<h6 id = "lcolheader">' + daysoftheweek[lcolidx] + '</h6>'
-                mcolstring += '<h6 id = "mcolheader">' + daysoftheweek[mcolidx] + '</h6>'
-                rcolstring += '<h6 id = "rcolheader">' + daysoftheweek[rcolidx] + '</h6>'
+        if (!schedule) {
+            console.log("No schedule found in local storage.");
+            return;
+        }
 
-                lcolinfo = schedule[lcolidx]
-                for (time in lcolinfo){
-                    lcolstring += '<div class="card"> <p>' + time.toString() + "<br><br>"
-                    for(medication of lcolinfo[time]){
-                        lcolstring += medication + "<br>"
-                    }
-                    lcolstring += '</p> </div>'
-                    
-                }
-                mcolinfo = schedule[mcolidx]
-                for (time in mcolinfo){
-                    mcolstring += '<div class="card"> <p>' + time.toString() + "<br><br>"
-                    for(medication of mcolinfo[time]){
-                        mcolstring += medication + "<br>"
-                    }
-                    mcolstring += '</p> </div>'
-                }
-                rcolinfo = schedule[rcolidx]
-                for (time in rcolinfo){
-                    rcolstring += '<div class="card"> <p>' + time.toString() + "<br><br>"
-                    for(medication of rcolinfo[time]){
-                        rcolstring += medication + "<br>"
-                    }
-                    rcolstring += '</p> </div>'
-                }
+        const leftCol = document.getElementById("lcol");
+        const midCol = document.getElementById("mcol");
+        const rightCol = document.getElementById("rcol");
 
-                leftCol.innerHTML = lcolstring
-                midCol.innerHTML = mcolstring
-                rightCol.innerHTML = rcolstring
+        let lcolstring = "";
+        let mcolstring = "";
+        let rcolstring = "";
 
+        const today = new Date().getDay();
+
+        const lcolidx = ((today + offset - 1) % 7 + 7) % 7;
+        const mcolidx = ((today + offset) % 7 + 7) % 7;
+        const rcolidx = ((today + offset + 1) % 7 + 7) % 7;
+
+        lcolstring += '<h6 id="lcolheader">' + daysoftheweek[lcolidx] + '</h6>';
+        mcolstring += '<h6 id="mcolheader">' + daysoftheweek[mcolidx] + '</h6>';
+        rcolstring += '<h6 id="rcolheader">' + daysoftheweek[rcolidx] + '</h6>';
+
+        const lcolinfo = schedule[lcolidx] || {};
+        for (const time in lcolinfo) {
+            lcolstring += '<div class="card"><p><b>' + time + "</b><br><br>";
+            for (const medication of lcolinfo[time]) {
+                lcolstring += medication + "<br>";
             }
+            lcolstring += '</p></div>';
+        }
 
-            function swipeDetect(el, callback){
-                var touchSurface = el,
-                swipeDir,
-                startX,
-                startY,
-                distX,
-                distY,
-                threshold=150,
-                restraint=100,
-                allowedTime=300,
-                elapsedTime,
-                startTime,
-                handleSwipe = callback || function(swipeDir){}
-
-                touchSurface.addEventListener('touchstart', function(e){
-                    var touchObj = e.changedTouches[0]
-                    swipeDir = 'none'
-                    dist = 0
-                    startX = touchObj.pageX
-                    startY = touchObj.pageY
-                    startTime = new Date().getTime()
-                    e.preventDefault()
-                }, false)
-
-                touchSurface.addEventListener('touchmove', function(e){
-                    e.preventDefault()
-                })
-
-                touchSurface.addEventListener('touchend', function(e){
-                    var touchobj = e.changedTouches[0]
-                    distX = touchobj.pageX - startX
-                    distY = touchobj.pageY - startY
-                    elapsedTime = new Date().getTime() - startTime
-                    if (elapsedTime <= allowedTime){
-                        if (Math.abs(distX) >= threshold && Math.abs(distY) <= restraint){
-                            swipeDir = (distX < 0) ? 'left' : 'right'
-                        }
-                        else if (Math.abs(distX) <= restraint && Math.abs(distY) >= threshold){
-                            swipeDir = (distY < 0) ? 'up' : 'down'
-                        }
-                    }
-                    console.log("Swipe! ", swipeDir)
-                    handleSwipe(swipeDir);
-                }, false)
+        const mcolinfo = schedule[mcolidx] || {};
+        for (const time in mcolinfo) {
+            mcolstring += '<div class="card"><p><b>' + time + "</b><br><br>";
+            for (const medication of mcolinfo[time]) {
+                mcolstring += medication + "<br>";
             }
+            mcolstring += '</p></div>';
+        }
 
-            function boot(){
-                let rack = document.getElementById("rackbody")
-                swipeDetect(rack, function(swipeDir){
-                    if (swipeDir == 'left'){
-                        offset += 1
-                        renderSchedule()
-                    }
-                    else if (swipeDir == 'right'){
-                        offset -= 1
-                        renderSchedule()
-                    }
-                })
+        const rcolinfo = schedule[rcolidx] || {};
+        for (const time in rcolinfo) {
+            rcolstring += '<div class="card"><p><b>' + time + "</b><br><br>";
+            for (const medication of rcolinfo[time]) {
+                rcolstring += medication + "<br>";
             }
-        </script>
+            rcolstring += '</p></div>';
+        }
+
+        if (leftCol) leftCol.innerHTML = lcolstring;
+        if (midCol) midCol.innerHTML = mcolstring;
+        if (rightCol) rightCol.innerHTML = rcolstring;
+    }
+
+    function swipeDetect(el, callback) {
+        var touchSurface = el,
+        swipeDir, startX, startY, distX, distY,
+        threshold = 150, restraint = 100, allowedTime = 300, startTime,
+        handleSwipe = callback || function(swipeDir){};
+
+        if (!touchSurface) return;
+
+        touchSurface.addEventListener('touchstart', function(e){
+            var touchObj = e.changedTouches[0];
+            swipeDir = 'none';
+            startX = touchObj.pageX;
+            startY = touchObj.pageY;
+            startTime = new Date().getTime();
+        }, false);
+
+        touchSurface.addEventListener('touchend', function(e){
+            var touchobj = e.changedTouches[0];
+            distX = touchobj.pageX - startX;
+            distY = touchobj.pageY - startY;
+            var elapsedTime = new Date().getTime() - startTime;
+            if (elapsedTime <= allowedTime){
+                if (Math.abs(distX) >= threshold && Math.abs(distY) <= restraint){
+                    swipeDir = (distX < 0) ? 'left' : 'right';
+                }
+            }
+            handleSwipe(swipeDir);
+        }, false);
+    }
+
+    function boot() {
+        let rack = document.getElementById("rackbody");
+        swipeDetect(rack, function(swipeDir){
+            if (swipeDir === 'left'){
+                offset += 1;
+                renderSchedule();
+            } else if (swipeDir === 'right'){
+                offset -= 1;
+                renderSchedule();
+            }
+        });
+    }
+</script>
 
         <div id = "header">
             <img src="assets/Cofactor.png" style="width:75px;height:75px;margin:12.5px">

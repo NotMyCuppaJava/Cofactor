@@ -3,75 +3,146 @@
     <head>
         <title>Cofactor</title>
         <link rel="stylesheet" href="style.css">
-        <!-- FONTS below -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
-    </head>
-    <body onload = "loadSupps(); populate()">
-        <!-- loadData();makeSchedule([7.5, 12.0, 20.0]) -->
-        <script src="main.js"></script>
+        
+        <script src="sched.js"></script>
         <script>
+            const fallbackItems = [
+                "Iron", "Calcium", "Magnesium", "Zinc", "Copper", "Potassium",
+                "Vitamin D3", "Vitamin K2", "Vitamin C", "Vitamin B12", "Folate",
+                "Ibuprofen", "Acetaminophen", "Omeprazole", "Levothyroxine",
+                "Metformin", "Lisinopril", "Atorvastatin", "Warfarin", "Sertraline",
+                "Fish Oil", "St. John's Wort", "Ashwagandha", "Melatonin", "Green Tea Extract"
+            ];
+
+            async function initSupps() {
+                if (window.loadData) loadData();
+                if (window.loadJSON) {
+                    try { await loadJSON(); } catch (e) { console.warn(e); }
+                }
+                populate();
+                renderSupps();
+            }
+
             function populate() {
                 const select = document.getElementById("medselect");
-                if (!select || !data || !data.items) return;
+                if (!select) return;
+                const itemsList = (window.data && window.data.items) ? window.data.items : fallbackItems;
+
                 select.innerHTML = "<option value='' disabled selected hidden>Choose Medication</option>";
-                for (const medication of data.items) {
-                    select.innerHTML += "<option value='" + medication + "'>" + medication + "</option>";
+                for (const item of itemsList) {
+                    select.innerHTML += "<option value='" + item + "'>" + item + "</option>";
                 } 
             }
             
-            function loadSupps() {
-                supps = JSON.parse(localStorage.getItem("meds"))
-    
+            function renderSupps() {
                 const rackbody = document.getElementById("rackbodyx");
                 if (!rackbody) return;
                 rackbody.innerHTML = "";
-                for (const med of supps) {
+                
+                const saved = localStorage.getItem("meds");
+                const activeSupps = saved ? JSON.parse(saved) : (window.supps || []);
+                
+                activeSupps.forEach((med, index) => {
                     const suppdiv = document.createElement("div");
                     suppdiv.className = "supplement";
-                    const supptext = document.createElement("p");
-                    supptext.innerHTML = med[0] + "<br><br> (" + med[1] + "/week)";
-                    suppdiv.appendChild(supptext);
+                    
+                    const name = Array.isArray(med) ? med[0] : (med.medication || "Unknown");
+                    const count = Array.isArray(med) ? med[1] : (med.dpw || 0);
+                    
+                    // Button is now nested inside the <p> tag so it anchors strictly to the bottle label
+                    suppdiv.innerHTML = `
+                        <p style="position: relative !important;">
+                            <span onclick="event.stopPropagation(); removeMed(${index})" 
+                                  style="position: absolute !important; top: -8px !important; left: -8px !important; width: 18px !important; height: 18px !important; background: #ff3b30 !important; color: #ffffff !important; border-radius: 50% !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; font-size: 11px !important; font-weight: 900 !important; cursor: pointer !important; z-index: 9999 !important; line-height: 1 !important; box-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;">✕</span>
+                            ${name}<br><br> (${count}/week)
+                        </p>
+                    `;
                     rackbody.appendChild(suppdiv);
+                });
+            }
+
+            function handleAddMed() {
+                const select = document.getElementById('medselect');
+                const dose = document.getElementById('doseinput');
+                
+                if (select && select.value && dose && dose.value) {
+                    const med = select.value;
+                    const num = parseInt(dose.value, 10);
+                    
+                    let currentMeds = [];
+                    try {
+                        const stored = localStorage.getItem("meds");
+                        if (stored) currentMeds = JSON.parse(stored);
+                    } catch (e) { currentMeds = []; }
+
+                    if (!Array.isArray(currentMeds)) currentMeds = [];
+
+                    const index = currentMeds.findIndex(item => (Array.isArray(item) ? item[0] : item.medication) === med);
+                    if (index !== -1) {
+                        currentMeds[index] = [med, num];
+                    } else {
+                        currentMeds.push([med, num]);
+                    }
+
+                    localStorage.setItem("meds", JSON.stringify(currentMeds));
+                    window.supps = currentMeds;
+                    localStorage.removeItem("schedule");
+
+                    renderSupps();
+                    
+                    select.selectedIndex = 0;
+                    dose.value = "";
                 }
             }
+
+            function removeMed(index) {
+                let currentMeds = [];
+                try {
+                    const stored = localStorage.getItem("meds");
+                    if (stored) currentMeds = JSON.parse(stored);
+                } catch (e) { currentMeds = []; }
+
+                if (!Array.isArray(currentMeds)) return;
+
+                currentMeds.splice(index, 1);
+
+                localStorage.setItem("meds", JSON.stringify(currentMeds));
+                window.supps = currentMeds;
+                localStorage.removeItem("schedule");
+
+                renderSupps();
+            }
         </script>
+    </head>
+    <body onload="initSupps()">
 
-        <div id = "header">
+        <div id="header">
             <img src="assets/Cofactor.png" style="width:75px;height:75px;margin:12.5px">
-            <h1 id = "maintitle">My Supplements</h1>
+            <h1 id="maintitle">My Supplements</h1>
         </div>
 
-        <div id = "rackbodyx" class="shelf">
-        </div>
+        <div id="rackbodyx" class="shelf"></div>
 
-        <div id = "kneex">
-            <select id = "medselect">
+        <div id="kneex">
+            <select id="medselect">
                   <option value="" disabled selected hidden>Choose Medication</option>
             </select>
-            <input type="number" id = "doseinput" placeholder="#">
-            <button id="plus" onclick="addMed(document.getElementById('medselect').value, document.getElementById('doseinput').value)">+</button>
+            <input type="number" id="doseinput" placeholder="#">
+            <button id="plus" onclick="handleAddMed()">+</button>
         </div>
 
-        <div id = "footer">
-            <a href="index.html" onclick="saveData()">
-               <center>
-                    <img src="assets/calendar.png" class="icon">
-                    <p>Calendar</p>
-                </center>
+        <div id="footer">
+            <a href="index.html" onclick="window.saveData && saveData()">
+                <center><img src="assets/calendar.png" class="icon"><p>Calendar</p></center>
             </a>
-            <a href="supps.html" onclick="saveData()">
-                <center>
-                    <img src="assets/pills.png" class="icon">
-                    <p>Supplements</p>
-                </center>
+            <a href="supps.html" onclick="window.saveData && saveData()">
+                <center><img src="assets/pills.png" class="icon"><p>Supplements</p></center>
             </a>
             <a>
-                <center>
-                    <img src="assets/settings.png" class="icon">
-                    <p>Settings</p>
-                </center>
+                <center><img src="assets/settings.png" class="icon"><p>Settings</p></center>
             </a>
         </div>
 

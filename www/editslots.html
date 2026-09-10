@@ -1,85 +1,114 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Cofactor</title>
-        <link rel="stylesheet" href="style.css">
-        <!-- FONTS below -->
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+<head>
+<title>Cofactor</title>
+<link rel="stylesheet" href="style.css">
+<!-- FONTS below -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
 
-    </head>
-    <body onload = "">
-        <script src = "sched.js"></script>
-        <script>
-            async function setSlots() {
-                const checkbox = document.getElementById("lunchbox")
-                let breakv = parseInt(document.getElementById("brekky").value)
-                let lunchv = parseInt(document.getElementById("lunch").value)
-                let dinv = parseInt(document.getElementById("dinner").value)
-                let slots = checkbox.checked ? [breakv, lunchv, dinv] : [breakv, dinv]
-                localStorage.setItem("slots", JSON.stringify(slots));
-
-                await loadJSON()
-                try{
-                    let medications = JSON.parse(localStorage.getItem("meds"))
-                    let calendar = generateSchedule(slots, medications)
-                    localStorage.setItem("schedule", JSON.stringify(calendar));
-                } catch (e) {
-                    console.log("There was an issue generating the schedule.", e)
-                }
-                
-
-                window.location.href='index.html';
-                startup()
-
-            }
-        </script>
+</head>
+<body onload="loadSavedSlots()">
+<script src="sched.js"></script>
+<script>
+function loadSavedSlots() {
+    const saved = localStorage.getItem("slots");
+    if (!saved) return;
     
+    try {
+        const slots = JSON.parse(saved);
+        const checkbox = document.getElementById("lunchbox");
+        
+        // If 3 slots exist, lunch is enabled
+        if (slots.length === 3) {
+            checkbox.checked = true;
+            document.getElementById("brekky").value = slots[0];
+            document.getElementById("lunch").value = slots[1];
+            document.getElementById("dinner").value = slots[2];
+        } else if (slots.length === 2) {
+            checkbox.checked = false;
+            document.getElementById("brekky").value = slots[0];
+            document.getElementById("dinner").value = slots[1];
+        }
+    } catch (e) {
+        console.error("Error loading saved slots:", e);
+    }
+}
 
-        <div id = "header">
-            <img src="assets/Cofactor.png" style="width:75px;height:75px;margin:12.5px">
-            <h1 id = "maintitle">My Schedule</h1>
-        </div>
+async function setSlots() {
+    const checkbox = document.getElementById("lunchbox");
+    let breakv = parseInt(document.getElementById("brekky").value, 10);
+    let lunchv = parseInt(document.getElementById("lunch").value, 10);
+    let dinv = parseInt(document.getElementById("dinner").value, 10);
+    
+    // Save 3 slots if lunch box is checked, otherwise 2
+    let slots = checkbox.checked ? [breakv, lunchv, dinv] : [breakv, dinv];
+    
+    localStorage.setItem("slots", JSON.stringify(slots));
+    localStorage.removeItem("schedule");
 
-        <div id = "rackbodyy">
-            <p>Most medications are taken either early in the morning or with dinner. Supplements should be taken along with them. You can also opt to take some supplements with lunch if that fits with your schedule.</p>
-            <div class = "card-box">
-                <h6>Breakfast</h6>
-                <input type="range" min="6" max="12" id = "brekky">
-                <div class="timebase">
-                    <p>6AM</p>
-                    <p>9AM</p>
-                    <p>12PM</p>
-                </div>
-            </div>
-            <div class = "card-box">
-                <h6 class = "checkbox">Lunch <input id = "lunchbox" type="checkbox"></h6>
-                <input type="range" min = "10" max = "14" id = "lunch">
-                <div class="timebase">
-                    <p>10AM</p>
-                    <p>12PM</p>
-                    <p>2PM</p>
-                </div>
-            </div>
-            <div class = "card-box">
-                <h6>Dinner</h6>
-                <input type="range" min="12" max="24" id = "dinner">
-                <div class="timebase">
-                    <p>12PM</p>
-                    <p>6PM</p>
-                    <p>12AM</p>
-                </div>
-            </div>
-        </div>
+    if (typeof loadJSON === "function") {
+        try { await loadJSON(); } catch (e) { console.warn(e); }
+    }
+    
+    try {
+        let medications = JSON.parse(localStorage.getItem("meds")) || [];
+        if (typeof generateSchedule === "function" && medications.length > 0) {
+            let calendar = generateSchedule(slots, medications);
+            localStorage.setItem("schedule", JSON.stringify(calendar));
+        }
+    } catch (e) {
+        console.log("There was an issue generating the schedule.", e);
+    }
 
-        <div id = "knee">
-            <button onclick="window.location.href='index.html';startup()">Discard Changes</button>
-            <button onclick="setSlots()">Save Changes</button>
-        </div>
+    window.location.href = 'index.html';
+}
+</script>
 
-        <div id = "footerx">
-        </div>
+<div id="header">
+<img src="assets/Cofactor.png" style="width:75px;height:75px;margin:12.5px">
+<h1 id="maintitle">My Schedule</h1>
+</div>
 
-    </body>
+<div id="rackbodyy">
+<p>Most medications are taken either early in the morning or with dinner. Supplements should be taken along with them. You can also opt to take some supplements with lunch if that fits with your schedule.</p>
+<div class="card-box">
+<h6>Breakfast</h6>
+<input type="range" min="6" max="12" id="brekky">
+<div class="timebase">
+<p>6AM</p>
+<p>9AM</p>
+<p>12PM</p>
+</div>
+</div>
+<div class="card-box">
+<h6 class="checkbox">Lunch <input id="lunchbox" type="checkbox"></h6>
+<input type="range" min="10" max="14" id="lunch">
+<div class="timebase">
+<p>10AM</p>
+<p>12PM</p>
+<p>2PM</p>
+</div>
+</div>
+<div class="card-box">
+<h6>Dinner</h6>
+<input type="range" min="12" max="24" id="dinner">
+<div class="timebase">
+<p>12PM</p>
+<p>6PM</p>
+<p>12AM</p>
+</div>
+</div>
+</div>
+
+<div id="knee">
+<button onclick="window.location.href='index.html'">Discard Changes</button>
+<button onclick="setSlots()">Save Changes</button>
+</div>
+
+<div id="footerx">
+</div>
+
+</body>
 </html>

@@ -39,19 +39,34 @@ class timeStamp {
 }
 
 function loadData() {
-    const localInfo = localStorage.getItem('info');
-    if (!localInfo) {
-        console.log("DATA NOT THERE;"); 
-        return;
+    // Force check for the exact 'meds' key stored by supps.html
+    const saved = localStorage.getItem("meds");
+    
+    if (saved) {
+        try {
+            const parsed = JSON.parse(saved);
+            
+            // Format incoming 2D arrays [["Iron", 4]] into objects if your algorithm expects objects
+            window.supps = parsed.map(item => {
+                if (Array.isArray(item)) {
+                    return { medication: item[0], dpw: item[1] };
+                }
+                return item;
+            });
+            
+            // Keep a legacy global variable in sync if your algorithm uses 'supps'
+            if (typeof supps !== "undefined") {
+                supps = window.supps;
+            }
+            
+            return window.supps;
+        } catch (e) {
+            console.error("Error parsing localStorage data:", e);
+        }
     }
-    const info = JSON.parse(localInfo);
-    if (info.meds) {
-        supps = info.meds.map(med => new prescription(med[0], med[1]));
-    }
-    if (info.slots) {
-        slots = info.slots;
-    }
-    console.log("DATA LOADED!");
+    
+    window.supps = [];
+    return [];
 }
 
 function saveData() {
@@ -281,11 +296,36 @@ function medsToString(meds) {
     }
     return "";
 }
-
-
-
 function addMed(med, num) {
-    supps.push(new prescription(med, parseInt(num)));
-    loadSupps();
-    saveData();
+    if (!med || !num) return;
+    
+    // Read directly from localStorage
+    let currentMeds = [];
+    try {
+        const stored = localStorage.getItem("meds");
+        if (stored) currentMeds = JSON.parse(stored);
+    } catch (e) {
+        currentMeds = [];
+    }
+
+    // Ensure array structure
+    if (!Array.isArray(currentMeds)) currentMeds = [];
+    
+    const doseNum = parseInt(num, 10);
+    
+    // Check if item exists (supports both array and object formats)
+    const index = currentMeds.findIndex(item => {
+        const itemName = Array.isArray(item) ? item[0] : item.medication;
+        return itemName === med;
+    });
+    
+    if (index !== -1) {
+        currentMeds[index] = [med, doseNum];
+    } else {
+        currentMeds.push([med, doseNum]);
+    }
+    
+    // Write directly back to localStorage and memory
+    localStorage.setItem("meds", JSON.stringify(currentMeds));
+    window.supps = currentMeds;
 }
