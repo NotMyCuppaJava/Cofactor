@@ -9,6 +9,7 @@
         
         <script src="sched.js"></script>
         <script>
+            let recent_popup = null
             const fallbackItems = [
                 "Iron", "Calcium", "Magnesium", "Zinc", "Copper", "Potassium",
                 "Vitamin D3", "Vitamin K2", "Vitamin C", "Vitamin B12", "Folate",
@@ -47,23 +48,36 @@
                 
                 activeSupps.forEach((med, index) => {
                     const suppdiv = document.createElement("div");
+                    suppdiv.onclick = () => showInfo(index);
                     suppdiv.className = "supplement";
                     
                     const name = Array.isArray(med) ? med[0] : (med.medication || "Unknown");
                     const count = Array.isArray(med) ? med[1] : (med.dpw || 0);
                     
-                    // Button is now nested inside the <p> tag so it anchors strictly to the bottle label
+                    
                     suppdiv.innerHTML = `
                         <p style="position: relative !important;">
-                            <span onclick="event.stopPropagation(); removeMed(${index})" 
-                                  style="position: absolute !important; top: -8px !important; left: -8px !important; width: 18px !important; height: 18px !important; background: #ff3b30 !important; color: #ffffff !important; border-radius: 50% !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; font-size: 11px !important; font-weight: 900 !important; cursor: pointer !important; z-index: 9999 !important; line-height: 1 !important; box-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;">✕</span>
                             ${name}<br><br> (${count}/week)
                         </p>
                     `;
                     rackbody.appendChild(suppdiv);
                 });
             }
+            function showInfo(index){
+                console.log(index);
+                if(recent_popup){
+                    document.body.removeChild(recent_popup);
+                }
+                recent_popup = document.createElement("div");
+                recent_popup.className = "popup";
+                recent_popup.innerHTML = `HI ${index}`;
+                recent_popup.style = `position: absolute; width: 100px; height: 100px; background-color: #fff; border: 1px solid #000; top: calc(190px + ${Math.floor(index/3)} * (60vw - 100px) * 0.53  + 40px ); left:  calc(190px + ${Math.floor(index%3)} * (60vw - 100px) * 0.65  - 65px );`;
+                if(recent_popup){
+                    document.body.appendChild(recent_popup);
+                }
+                console.log(recent_popup);
 
+            }
             function handleAddMed() {
                 const select = document.getElementById('medselect');
                 const dose = document.getElementById('doseinput');
@@ -131,7 +145,9 @@
                   <option value="" disabled selected hidden>Choose Medication</option>
             </select>
             <input type="number" id="doseinput" placeholder="#">
-            <button id="plus" onclick="handleAddMed()">+</button>
+            <button id="plus" onclick="
+            handleAddMed()
+            ">+</button>
         </div>
 
         <div id="footer">
