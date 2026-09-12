@@ -45,10 +45,11 @@ p{
     display:flex;
 }
 
-a {
+a, #camcontainer {
     color: inherit;
     text-decoration: none;
     text-align:center;
+    width:33vw;
 }
 
 #knee > button{
