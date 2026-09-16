@@ -1,25 +1,45 @@
+let result = null;
 
-function importPhoto(){
-    const fileInput = document.getElementById('fileInput');
-    fileInput.click();
+function importPhoto() {
+  const fileInput = document.getElementById('fileInput');
+  if (fileInput) fileInput.click();
 }
 
-function initOCR() {
-  document.getElementById('fileInput').addEventListener('change', async (event) => {
+async function loadJSON() {
+  try {
+    const response = await fetch("./interaction.json");
+    const json = await response.json();
+    
+    // Attach explicitly to window so the HTML script can read it
+    window.data = json; 
+    console.log("JSON Data loaded successfully:", window.data);
+  } catch (error) {
+    console.error("Error loading JSON:", error);
+  }
+}
+
+async function initOCR() {
+  await loadJSON();
+
+  const fileInput = document.getElementById('fileInput');
+  if (!fileInput) return;
+
+  fileInput.addEventListener('change', async (event) => {
     const file = event.target.files[0];
     if (!file) return;
 
-    console.log("File selected: ", file.name, "Type: ", file.type);
+    const itemsList = window.data?.items;
+    if (!itemsList) {
+      console.error("JSON data is not ready yet.");
+      return;
+    }
 
     try {
-      // Decode image natively without external HEIC libraries
       const image = await loadImage(file);
-      console.log("Loaded image successfully");
-
+      
       const imgWidth = image.width || image.naturalWidth;
       const imgHeight = image.height || image.naturalHeight;
 
-      // Upscale dimensions and add white padding for Tesseract
       const padding = 20;
       const scaleFactor = Math.max(1, 1200 / imgWidth);
       const scaledWidth = imgWidth * scaleFactor;
@@ -35,26 +55,38 @@ function initOCR() {
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
       ctx.drawImage(image, padding, padding, scaledWidth, scaledHeight);
-      console.log("Canvas drawn");
 
-      // Initialize Tesseract worker with progress logger
       const worker = await Tesseract.createWorker('eng', 1, {
-        logger: (m) => {
-          if (m.progress !== undefined) {
-            const percent = Math.round(m.progress * 100);
-            console.log(`[Tesseract] ${m.status}: ${percent}%`);
-          } else {
-            console.log(`[Tesseract] ${m.status}`);
-          }
-        }
+        logger: (m) => console.log(`[Tesseract] ${m.status}`)
       });
 
-      const result = await worker.recognize(canvas);
+      result = await worker.recognize(canvas);
       await worker.terminate();
 
-      console.log("Tesseract result: ", result.data.text);
+      const txt = result?.data?.text || "";
+      console.log("Tesseract result:", txt);
+
+      const searchInput = document.getElementById("site-search");
+
+      if (txt && searchInput) {
+        for (const member of itemsList) {
+          // Supports both string arrays and object arrays { name: "..." }
+          const itemName = typeof member === 'string' ? member : member?.name;
+          if (!itemName) continue;
+
+          if (txt.toLowerCase().includes(itemName.toLowerCase())) {
+            console.log("Found match: ", itemName);
+            searchInput.value = itemName;
+            searchInput.dispatchEvent(new Event('input'));
+            return;
+          }
+        }
+        
+        searchInput.value = "No Matches";
+        searchInput.dispatchEvent(new Event('input'));
+      }
     } catch (e) {
-      console.log("Error during OCR: ", e);
+      console.error("Error during OCR: ", e);
     }
   });
 }
@@ -65,7 +97,7 @@ function loadImage(file) {
     reader.onload = (e) => {
       const img = new Image();
       img.onload = () => resolve(img);
-      img.onerror = () => reject(new Error('Failed to load image into browser context.'));
+      img.onerror = () => reject(new Error('Failed to load image.'));
       img.src = e.target.result;
     };
     reader.onerror = () => reject(new Error('Failed to read file.'));

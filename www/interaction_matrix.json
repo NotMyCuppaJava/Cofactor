@@ -1,75 +1,797 @@
 {
-  "iron": {
-    "calcium": 0.8,
-    "magnesium": 0.6,
-    "zinc": 0.6,
-    "copper": 0.5,
-    "omeprazole": 0.7,
-    "green tea extract": 0.7,
-    "vitamin c": -0.5
-  },
-  "calcium": {
-    "iron": 0.6,
-    "zinc": 0.5,
-    "magnesium": 0.4,
-    "omeprazole": 0.3
-  },
-  "magnesium": {
-    "calcium": 0.4,
-    "iron": 0.4,
-    "zinc": 0.4,
-    "omeprazole": 0.4
-  },
-  "zinc": {
-    "iron": 0.6,
-    "calcium": 0.5,
-    "copper": 0.7
-  },
-  "copper": {
-    "zinc": 0.8,
-    "iron": 0.5,
-    "vitamin c": 0.3
-  },
-  "vitamin d3": {},
-  "vitamin k2": {},
-  "vitamin c": {
-    "iron": -0.5
-  },
-  "vitamin b12": {
-    "omeprazole": 0.8,
-    "metformin": 0.5,
-    "vitamin c": 0.4
-  },
-  "folate": {
-    "green tea extract": 0.4
-  },
-  "ibuprofen": {},
-  "acetaminophen": {},
-  "omeprazole": {},
-  "levothyroxine": {
-    "calcium": 0.9,
-    "iron": 0.9,
-    "magnesium": 0.8,
-    "omeprazole": 0.6
-  },
-  "metformin": {},
-  "lisinopril": {},
-  "atorvastatin": {
-    "st. john's wort": 0.7,
-    "magnesium": 0.3
-  },
-  "warfarin": {
-    "vitamin k2": 0.9,
-    "st. john's wort": 0.8,
-    "green tea extract": 0.6
-  },
-  "sertraline": {
-    "st. john's wort": 0.9
-  },
-  "fish oil": {},
-  "st. john's wort": {},
-  "ashwagandha": {},
-  "melatonin": {},
-  "green tea extract": {},
-  "potassium": {}
+  "items": [
+    {
+      "name": "Multivitamin",
+      "interactions": {
+        "levothyroxine": 0.8,
+        "antibiotics": 0.6
+      }
+    },
+    {
+      "name": "Vitamin D3",
+      "interactions": {
+        "calcium": -0.4,
+        "thiazide diuretics": 0.5
+      }
+    },
+    {
+      "name": "Vitamin C",
+      "interactions": {
+        "iron": -0.5,
+        "copper": 0.3,
+        "vitamin b12": 0.4,
+        "warfarin": 0.3
+      }
+    },
+    {
+      "name": "Vitamin B12",
+      "interactions": {
+        "omeprazole": 0.8,
+        "metformin": 0.5,
+        "vitamin c": 0.4
+      }
+    },
+    {
+      "name": "Vitamin B-Complex",
+      "interactions": {
+        "levodopa": 0.6
+      }
+    },
+    {
+      "name": "Magnesium",
+      "interactions": {
+        "calcium": 0.4,
+        "iron": 0.6,
+        "zinc": 0.4,
+        "omeprazole": 0.4,
+        "levothyroxine": 0.8,
+        "gabapentin": 0.6,
+        "bisphosphonates": 0.8
+      }
+    },
+    {
+      "name": "Zinc",
+      "interactions": {
+        "iron": 0.6,
+        "calcium": 0.5,
+        "copper": 0.8,
+        "quinolone antibiotics": 0.8,
+        "tetracycline": 0.8
+      }
+    },
+    {
+      "name": "Calcium",
+      "interactions": {
+        "iron": 0.8,
+        "zinc": 0.5,
+        "magnesium": 0.4,
+        "omeprazole": 0.3,
+        "levothyroxine": 0.9,
+        "ceftriaxone": 0.9,
+        "thiazide diuretics": 0.5
+      }
+    },
+    {
+      "name": "Iron",
+      "interactions": {
+        "calcium": 0.8,
+        "magnesium": 0.6,
+        "zinc": 0.6,
+        "copper": 0.5,
+        "omeprazole": 0.7,
+        "green tea extract": 0.7,
+        "vitamin c": -0.5,
+        "levothyroxine": 0.9,
+        "methyldopa": 0.6
+      }
+    },
+    {
+      "name": "Folate / Folic Acid",
+      "interactions": {
+        "green tea extract": 0.4,
+        "methotrexate": 0.8,
+        "phenytoin": 0.6
+      }
+    },
+    {
+      "name": "Vitamin E",
+      "interactions": {
+        "warfarin": 0.8,
+        "aspirin": 0.5,
+        "ibuprofen": 0.4,
+        "clopidogrel": 0.6
+      }
+    },
+    {
+      "name": "Vitamin K2",
+      "interactions": {
+        "warfarin": 0.95
+      }
+    },
+    {
+      "name": "Vitamin A",
+      "interactions": {
+        "isotretinoin": 0.9,
+        "warfarin": 0.4
+      }
+    },
+    {
+      "name": "Vitamin B6",
+      "interactions": {
+        "levodopa": 0.7,
+        "altretamine": 0.6,
+        "phenytoin": 0.4
+      }
+    },
+    {
+      "name": "Vitamin B1 (Thiamine)",
+      "interactions": {
+        "furosemide": 0.4
+      }
+    },
+    {
+      "name": "Vitamin B2 (Riboflavin)",
+      "interactions": {
+        "doxorubicin": 0.4
+      }
+    },
+    {
+      "name": "Vitamin B3 (Niacin)",
+      "interactions": {
+        "atorvastatin": 0.6,
+        "simvastatin": 0.6,
+        "allopurinol": 0.4
+      }
+    },
+    {
+      "name": "Biotin",
+      "interactions": {
+        "troponin lab tests": 0.9,
+        "thyroid lab tests": 0.8
+      }
+    },
+    {
+      "name": "Pantothenic Acid (Vitamin B5)",
+      "interactions": {
+        "cholinesterase inhibitors": 0.4
+      }
+    },
+    {
+      "name": "Potassium",
+      "interactions": {
+        "lisinopril": 0.8,
+        "losartan": 0.8,
+        "spironolactone": 0.9,
+        "eplerenone": 0.9
+      }
+    },
+    {
+      "name": "Selenium",
+      "interactions": {
+        "warfarin": 0.4,
+        "sedatives": 0.3
+      }
+    },
+    {
+      "name": "Copper",
+      "interactions": {
+        "zinc": 0.8,
+        "iron": 0.5,
+        "vitamin c": 0.3,
+        "penicillamine": 0.8
+      }
+    },
+    {
+      "name": "Manganese",
+      "interactions": {
+        "iron": 0.5,
+        "quinolone antibiotics": 0.6
+      }
+    },
+    {
+      "name": "Chromium",
+      "interactions": {
+        "insulin": 0.6,
+        "metformin": 0.5,
+        "levothyroxine": 0.5
+      }
+    },
+    {
+      "name": "Boron",
+      "interactions": {
+        "estrogen": 0.4
+      }
+    },
+    {
+      "name": "Trace Minerals",
+      "interactions": {
+        "levothyroxine": 0.7,
+        "antibiotics": 0.6
+      }
+    },
+    {
+      "name": "Fish Oil",
+      "interactions": {
+        "warfarin": 0.5,
+        "aspirin": 0.4,
+        "ibuprofen": 0.4,
+        "clopidogrel": 0.5,
+        "antihypertensives": 0.3
+      }
+    },
+    {
+      "name": "Krill Oil",
+      "interactions": {
+        "warfarin": 0.5,
+        "aspirin": 0.4
+      }
+    },
+    {
+      "name": "Algal Oil",
+      "interactions": {
+        "warfarin": 0.4
+      }
+    },
+    {
+      "name": "Flaxseed Oil",
+      "interactions": {
+        "warfarin": 0.4,
+        "insulin": 0.3
+      }
+    },
+    {
+      "name": "Evening Primrose Oil",
+      "interactions": {
+        "warfarin": 0.5,
+        "phenothiazines": 0.7,
+        "anticonvulsants": 0.6
+      }
+    },
+    {
+      "name": "Cod Liver Oil",
+      "interactions": {
+        "warfarin": 0.6,
+        "antihypertensives": 0.4,
+        "vitamin a": 0.5
+      }
+    },
+    {
+      "name": "Black Seed Oil",
+      "interactions": {
+        "antihypertensives": 0.5,
+        "metformin": 0.5,
+        "warfarin": 0.5
+      }
+    },
+    {
+      "name": "MCT Oil",
+      "interactions": {
+        "statins": 0.2
+      }
+    },
+    {
+      "name": "Borage Oil",
+      "interactions": {
+        "warfarin": 0.5,
+        "nsaids": 0.4,
+        "anesthetics": 0.6
+      }
+    },
+    {
+      "name": "Sea Buckthorn Oil",
+      "interactions": {
+        "warfarin": 0.4,
+        "antihypertensives": 0.3
+      }
+    },
+    {
+      "name": "Ashwagandha",
+      "interactions": {
+        "levothyroxine": 0.6,
+        "sertraline": 0.5,
+        "alprazolam": 0.6,
+        "immunosuppressants": 0.6,
+        "antihypertensives": 0.4
+      }
+    },
+    {
+      "name": "Turmeric / Curcumin",
+      "interactions": {
+        "warfarin": 0.6,
+        "aspirin": 0.5,
+        "ibuprofen": 0.4,
+        "iron": 0.5,
+        "tacrolimus": 0.7
+      }
+    },
+    {
+      "name": "Elderberry",
+      "interactions": {
+        "immunosuppressants": 0.6,
+        "prednisone": 0.6
+      }
+    },
+    {
+      "name": "Milk Thistle",
+      "interactions": {
+        "metformin": 0.4,
+        "losartan": 0.4,
+        "diazepam": 0.5
+      }
+    },
+    {
+      "name": "Ginkgo Biloba",
+      "interactions": {
+        "warfarin": 0.8,
+        "ibuprofen": 0.6,
+        "aspirin": 0.7,
+        "sertraline": 0.5,
+        "anticonvulsants": 0.7,
+        "efavirenz": 0.6
+      }
+    },
+    {
+      "name": "Panax Ginseng",
+      "interactions": {
+        "warfarin": 0.7,
+        "insulin": 0.6,
+        "phenelzine": 0.8,
+        "immunosuppressants": 0.6
+      }
+    },
+    {
+      "name": "Rhodiola Rosea",
+      "interactions": {
+        "sertraline": 0.6,
+        "escitalopram": 0.6,
+        "losartan": 0.4
+      }
+    },
+    {
+      "name": "Saw Palmetto",
+      "interactions": {
+        "finasteride": 0.5,
+        "birth control": 0.4,
+        "warfarin": 0.4
+      }
+    },
+    {
+      "name": "Echinacea",
+      "interactions": {
+        "immunosuppressants": 0.7,
+        "caffeine": 0.4,
+        "methotrexate": 0.5
+      }
+    },
+    {
+      "name": "St. John's Wort",
+      "interactions": {
+        "atorvastatin": 0.8,
+        "simvastatin": 0.8,
+        "warfarin": 0.9,
+        "sertraline": 0.95,
+        "birth control": 0.9,
+        "digoxin": 0.85,
+        "oxycodone": 0.8,
+        "cyclosporine": 0.95
+      }
+    },
+    {
+      "name": "Maca Root",
+      "interactions": {
+        "antihypertensives": 0.3
+      }
+    },
+    {
+      "name": "Berberine",
+      "interactions": {
+        "metformin": 0.7,
+        "cyclosporine": 0.8,
+        "losartan": 0.5,
+        "midazolam": 0.6,
+        "antihypertensives": 0.5
+      }
+    },
+    {
+      "name": "Holy Basil (Tulsi)",
+      "interactions": {
+        "warfarin": 0.5,
+        "insulin": 0.4,
+        "levothyroxine": 0.5
+      }
+    },
+    {
+      "name": "Cordyceps",
+      "interactions": {
+        "immunosuppressants": 0.6,
+        "warfarin": 0.5,
+        "insulin": 0.4
+      }
+    },
+    {
+      "name": "Lion's Mane Mushroom",
+      "interactions": {
+        "antidiabetics": 0.4,
+        "anticoagulants": 0.4
+      }
+    },
+    {
+      "name": "Reishi Mushroom",
+      "interactions": {
+        "warfarin": 0.6,
+        "antihypertensives": 0.5,
+        "insulin": 0.4
+      }
+    },
+    {
+      "name": "Chaga Mushroom",
+      "interactions": {
+        "insulin": 0.6,
+        "warfarin": 0.6,
+        "immunosuppressants": 0.5
+      }
+    },
+    {
+      "name": "Green Tea Extract",
+      "interactions": {
+        "iron": 0.8,
+        "folate": 0.5,
+        "warfarin": 0.6,
+        "nadolol": 0.8,
+        "bortezomib": 0.9
+      }
+    },
+    {
+      "name": "Garlic Extract",
+      "interactions": {
+        "warfarin": 0.7,
+        "saquinavir": 0.8,
+        "aspirin": 0.5,
+        "clopidogrel": 0.6
+      }
+    },
+    {
+      "name": "Valerian Root",
+      "interactions": {
+        "alprazolam": 0.7,
+        "zolpidem": 0.7,
+        "alcohol": 0.8,
+        "sedatives": 0.7
+      }
+    },
+    {
+      "name": "Passionflower",
+      "interactions": {
+        "zolpidem": 0.6,
+        "lorazepam": 0.6,
+        "sedatives": 0.6
+      }
+    },
+    {
+      "name": "Fenugreek",
+      "interactions": {
+        "warfarin": 0.5,
+        "insulin": 0.6,
+        "glipizide": 0.6
+      }
+    },
+    {
+      "name": "Cinnamon Extract",
+      "interactions": {
+        "metformin": 0.5,
+        "insulin": 0.5,
+        "hepatotoxic drugs": 0.5
+      }
+    },
+    {
+      "name": "Cranberry Extract",
+      "interactions": {
+        "warfarin": 0.5
+      }
+    },
+    {
+      "name": "Astragalus",
+      "interactions": {
+        "immunosuppressants": 0.7,
+        "lithium": 0.6,
+        "cyclophosphamide": 0.7
+      }
+    },
+    {
+      "name": "Resveratrol",
+      "interactions": {
+        "warfarin": 0.6,
+        "nsaids": 0.4,
+        "nicardipine": 0.5
+      }
+    },
+    {
+      "name": "Grape Seed Extract",
+      "interactions": {
+        "warfarin": 0.5,
+        "aspirin": 0.5,
+        "phenacetin": 0.4
+      }
+    },
+    {
+      "name": "Tribulus Terrestris",
+      "interactions": {
+        "lithium": 0.6,
+        "antidiabetics": 0.4,
+        "antihypertensives": 0.4
+      }
+    },
+    {
+      "name": "Whey Protein",
+      "interactions": {
+        "levodopa": 0.7,
+        "alendronate": 0.6,
+        "quinolone antibiotics": 0.6
+      }
+    },
+    {
+      "name": "Plant Protein",
+      "interactions": {
+        "levodopa": 0.5,
+        "iron": 0.3
+      }
+    },
+    {
+      "name": "Creatine Monohydrate",
+      "interactions": {
+        "nsaids": 0.4,
+        "nephrotoxic drugs": 0.5,
+        "caffeine": 0.3
+      }
+    },
+    {
+      "name": "Branched-Chain Amino Acids (BCAAs)",
+      "interactions": {
+        "levodopa": 0.7,
+        "insulin": 0.5,
+        "corticosteroids": 0.4
+      }
+    },
+    {
+      "name": "Essential Amino Acids (EAAs)",
+      "interactions": {
+        "levodopa": 0.6
+      }
+    },
+    {
+      "name": "Beta-Alanine",
+      "interactions": {
+        "taurine": 0.3
+      }
+    },
+    {
+      "name": "L-Citrulline",
+      "interactions": {
+        "sildenafil": 0.7,
+        "tadalafil": 0.7,
+        "nitroglycerin": 0.8,
+        "antihypertensives": 0.5
+      }
+    },
+    {
+      "name": "L-Arginine",
+      "interactions": {
+        "sildenafil": 0.7,
+        "nitroglycerin": 0.8,
+        "lisinopril": 0.5,
+        "potassium-sparing diuretics": 0.6
+      }
+    },
+    {
+      "name": "Glutamine",
+      "interactions": {
+        "lactulose": 0.5,
+        "anticonvulsants": 0.4,
+        "chemotherapy": 0.3
+      }
+    },
+    {
+      "name": "Pre-Workout Blends",
+      "interactions": {
+        "stimulants": 0.8,
+        "antihypertensives": 0.6,
+        "monoamine oxidase inhibitors": 0.8
+      }
+    },
+    {
+      "name": "Electrolyte / Hydration Mixes",
+      "interactions": {
+        "lisinopril": 0.6,
+        "spironolactone": 0.7,
+        "digoxin": 0.5
+      }
+    },
+    {
+      "name": "Collagen Peptides",
+      "interactions": {}
+    },
+    {
+      "name": "Casein Protein",
+      "interactions": {
+        "levodopa": 0.6,
+        "antibiotics": 0.5
+      }
+    },
+    {
+      "name": "Probiotics",
+      "interactions": {
+        "antibiotics": 0.6,
+        "immunosuppressants": 0.5
+      }
+    },
+    {
+      "name": "Prebiotic Fiber",
+      "interactions": {
+        "digoxin": 0.5,
+        "metformin": 0.4,
+        "carbamazepine": 0.5,
+        "lithium": 0.5
+      }
+    },
+    {
+      "name": "Digestive Enzymes",
+      "interactions": {
+        "acarbose": 0.6,
+        "miglitol": 0.6
+      }
+    },
+    {
+      "name": "Apple Cider Vinegar",
+      "interactions": {
+        "insulin": 0.5,
+        "digoxin": 0.5,
+        "furosemide": 0.5
+      }
+    },
+    {
+      "name": "Betaine HCl",
+      "interactions": {
+        "nsaids": 0.6,
+        "omeprazole": 0.7,
+        "antacids": 0.7
+      }
+    },
+    {
+      "name": "Saccharomyces Boulardii",
+      "interactions": {
+        "fluconazole": 0.8,
+        "antifungals": 0.8,
+        "immunosuppressants": 0.6
+      }
+    },
+    {
+      "name": "Sodium Butyrate",
+      "interactions": {}
+    },
+    {
+      "name": "Glucosamine",
+      "interactions": {
+        "warfarin": 0.8,
+        "doxorubicin": 0.5,
+        "toposide": 0.5
+      }
+    },
+    {
+      "name": "Chondroitin",
+      "interactions": {
+        "warfarin": 0.6,
+        "aspirin": 0.4
+      }
+    },
+    {
+      "name": "MSM (Methylsulfonylmethane)",
+      "interactions": {
+        "warfarin": 0.3
+      }
+    },
+    {
+      "name": "Hyaluronic Acid",
+      "interactions": {}
+    },
+    {
+      "name": "Coenzyme Q10",
+      "interactions": {
+        "warfarin": 0.7,
+        "antihypertensives": 0.4,
+        "chemotherapy": 0.4
+      }
+    },
+    {
+      "name": "Melatonin",
+      "interactions": {
+        "warfarin": 0.5,
+        "fluvoxamine": 0.8,
+        "zolpidem": 0.6,
+        "immunosuppressants": 0.5,
+        "antihypertensives": 0.4
+      }
+    },
+    {
+      "name": "L-Theanine",
+      "interactions": {
+        "antihypertensives": 0.4,
+        "stimulants": -0.3,
+        "sedatives": 0.4
+      }
+    },
+    {
+      "name": "Alpha-GPC",
+      "interactions": {
+        "scopolamine": 0.5,
+        "anticholinergics": 0.5,
+        "donepezil": 0.4
+      }
+    },
+    {
+      "name": "Phosphatidylserine",
+      "interactions": {
+        "anticholinergics": 0.5,
+        "acetylcholinesterase inhibitors": 0.4
+      }
+    },
+    {
+      "name": "N-Acetyl Cysteine (NAC)",
+      "interactions": {
+        "nitroglycerin": 0.8,
+        "activated charcoal": 0.6,
+        "immunosuppressants": 0.4
+      }
+    },
+    {
+      "name": "Alpha-Lipoic Acid (ALA)",
+      "interactions": {
+        "insulin": 0.6,
+        "metformin": 0.5,
+        "levothyroxine": 0.6,
+        "chemotherapy": 0.4
+      }
+    },
+    {
+      "name": "Glutathione",
+      "interactions": {
+        "cisplatin": 0.5
+      }
+    },
+    {
+      "name": "5-HTP",
+      "interactions": {
+        "sertraline": 0.95,
+        "fluoxetine": 0.95,
+        "escitalopram": 0.95,
+        "tramadol": 0.8,
+        "dextromethorphan": 0.7,
+        "carbidopa": 0.7
+      }
+    },
+    {
+      "name": "SAMe (S-Adenosylmethionine)",
+      "interactions": {
+        "sertraline": 0.9,
+        "fluoxetine": 0.9,
+        "levodopa": 0.6,
+        "tramadol": 0.8
+      }
+    },
+    {
+      "name": "Quercetin",
+      "interactions": {
+        "ciprofloxacin": 0.6,
+        "cyclosporine": 0.6,
+        "losartan": 0.5,
+        "warfarin": 0.5
+      }
+    },
+    {
+      "name": "Nicotinamide Mononucleotide (NMN)",
+      "interactions": {
+        "insulin": 0.3,
+        "statins": 0.3
+      }
+    }
+  ]
 }

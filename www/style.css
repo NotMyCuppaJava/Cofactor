@@ -1,3 +1,4 @@
+
 html, body {
     margin: 0;
     padding: 0;
@@ -118,6 +119,7 @@ h6, p{
 
 *{
     --h: calc(65vh - 100px);
+    --x: calc(var(--h) * 0.27);
 }
 
 .shelf {
@@ -160,7 +162,6 @@ h6, p{
 
 
 .supplement{
-    --x: calc(var(--h) * 0.27);
     background-image: url(assets/pillswide.png);
     height: var(--x);
     width: var(--x);
@@ -174,6 +175,9 @@ h6, p{
 .supplement > p{
     font-size: calc(var(--x) * 0.10);
     margin:0;
+    white-space: nowrap;       /* 1. Forces text to stay on a single line */
+    overflow: hidden;          /* 2. Hides the text that goes past the box */
+    text-overflow: ellipsis;
 }
 
 #rackbodyx{
@@ -241,6 +245,11 @@ input[type="checkbox"]{
     margin:0;
 }
 
+input[type="search"]{
+    width:100%;
+    margin:0;
+}
+
 .sliders {
     background-color: #d9d9d9;
     padding:5px;
@@ -277,4 +286,25 @@ input[type="checkbox"]{
 .timebase > p{
     margin: 0;
     padding: 0;
+}
+
+.autocorrect-item{
+    font-size:40px;
+    padding:10px;
+    border: 1px solid #292929 ;
+    background:#d9d9d9;
+}
+
+#autocorrect{
+    height:50%;
+    margin-bottom:5%;
+    overflow:auto;
+}
+
+#mobilepopup{
+    margin-top:50%;
+    height:var(--x);
+    width:var(--x);
+    position:absolute;
+    background:#fff;
 }
