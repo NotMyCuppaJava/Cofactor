@@ -140,14 +140,15 @@
 
         <div id="rackbodyx" class="shelf"></div>
 
-        <div id="kneex">
-            <select id="medselect">
+        <div id="knee">
+            <!-- <select id="medselect">
                   <option value="" disabled selected hidden>Choose Medication</option>
             </select>
             <input type="number" id="doseinput" placeholder="#">
             <button id="plus" onclick="
             handleAddMed()
-            ">+</button>
+            ">+</button> -->
+            <button onclick="document.getElementById('popup').hidden = false;">Add Medication</button>
         </div>
 
         <div id = "footer">
@@ -165,5 +166,16 @@
         </div>
         
         <input type="file" id="fileInput" accept="image/*" onchange="handleFileSelect(event)" style="display: none;">
+        <div id = "popup" style="position:absolute;top:0;left:0;width:100vw;height:100vh;background:#1c1c1cbe" hidden>
+                <div style="position:absolute;top:25vh;left:10vw;background:#fff;width:80vw;height:50vh;border-radius:10px;padding:20px;box-sizing:border-box;">
+                <h2>Add Medication</h2>
+                <select id="medselect">
+                    <option value="" disabled selected hidden>Choose Medication</option>
+                </select>
+                <input type="number" id="doseinput" placeholder="#">
+                <button id="plus" onclick="handleAddMed()">+</button>
+                <br><br>
+                <button onclick="document.getElementById('popup').hidden = true;">Close</button>
+        </div>
     </body>
 </html>
