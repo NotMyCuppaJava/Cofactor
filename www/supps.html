@@ -81,12 +81,11 @@
                 
                 activeSupps.forEach((med, index) => {
                     const suppdiv = document.createElement("div");
-                    suppdiv.onclick = () => showInfo(index, suppdiv.offsetLeft, suppdiv.offsetTop);
+                    suppdiv.onclick = () => showInfo(index, suppdiv.offsetLeft + 67, suppdiv.offsetTop - 299);
                     suppdiv.className = "supplement";
                     
                     const name = Array.isArray(med) ? med[0] : (med.medication || "Unknown");
                     const count = Array.isArray(med) ? med[1] : (med.dpw || 0);
-                    
                     
                     suppdiv.innerHTML = `
                         <p style="position: relative !important;">
@@ -98,9 +97,12 @@
             }
 
             function showInfo(index, x, y){
-                console.log(index)
                 bigPop = document.getElementById("mobilepopup");
+                
                 if (!bigPop) return;
+                
+                bigPop.innerHTML = `Info goes here<button onclick="removeMed(${index}); bigPop.hidden = true;" style="position: absolute; top: 6px; right: 8px; background: pink; width: 50px; height: 50px; border-radius: 20000000%; font-size: 40px; color: #ff3b30; cursor: pointer;">×</button>`;
+
                 bigPop.hidden = false;
                 bigPop.style.left = x + "px";
                 bigPop.style.top = y + "px";
@@ -135,7 +137,7 @@
 
                     renderSupps();
                     
-                    select.selectedIndex = 0;
+                    select.value = "";
                     dose.value = "";
                     console.log(localStorage.getItem("meds"));
                 }
@@ -215,6 +217,6 @@
             </div>
         </div>
 
-        <div id="mobilepopup"></div>
+        <div id="mobilepopup" hidden></div>
     </body>
 </html>
