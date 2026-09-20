@@ -98,10 +98,15 @@
 
             function showInfo(index, x, y){
                 bigPop = document.getElementById("mobilepopup");
-                
+                if (!bigPop) return;
+
+                document.querySelector("#closePopup").onclick = () => {
+                    removeMed(index)
+                    bigPop.hidden = true;
+                };
                 if (!bigPop) return;
                 
-                bigPop.innerHTML = `Info goes here<button onclick="removeMed(${index}); bigPop.hidden = true;" style="position: absolute; top: 6px; right: 8px; background: pink; width: 50px; height: 50px; border-radius: 20000000%; font-size: 40px; color: #ff3b30; cursor: pointer;">×</button>`;
+                document.getElementById("pinfo").innerHTML = `Info goes here`;
 
                 bigPop.hidden = false;
                 bigPop.style.left = x + "px";
@@ -217,6 +222,9 @@
             </div>
         </div>
 
-        <div id="mobilepopup" hidden></div>
+        <div id="mobilepopup" hidden>
+            <button id = "closePopup" style="position: absolute; top: 6px; right: 8px; background: pink; width: 50px; height: 50px; border-radius: 20000000%; font-size: 40px; color: #ff3b30; cursor: pointer;">×</button>
+            <p id="pinfo"></p>
+        </div>
     </body>
 </html>
