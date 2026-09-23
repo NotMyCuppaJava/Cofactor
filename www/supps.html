@@ -23,6 +23,7 @@
                 if (window.loadJSON) {
                     try { await loadJSON(); } catch (e) { console.warn(e); }
                 }
+                await
                 populate();
                 renderSupps();
             }
@@ -81,7 +82,7 @@
                 
                 activeSupps.forEach((med, index) => {
                     const suppdiv = document.createElement("div");
-                    suppdiv.onclick = () => showInfo(index, suppdiv.offsetLeft + 67, suppdiv.offsetTop - 299);
+                    suppdiv.onclick = () => showInfo(index, suppdiv.offsetLeft + 0, suppdiv.offsetTop - 109, med);
                     suppdiv.className = "supplement";
                     
                     const name = Array.isArray(med) ? med[0] : (med.medication || "Unknown");
@@ -96,7 +97,7 @@
                 });
             }
 
-            function showInfo(index, x, y){
+            function showInfo(index, x, y, labelin){
                 bigPop = document.getElementById("mobilepopup");
                 if (!bigPop) return;
 
@@ -106,7 +107,18 @@
                 };
                 if (!bigPop) return;
                 
-                document.getElementById("pinfo").innerHTML = `Info goes here`;
+                if (window.data.table){
+                    console.log(labelin)
+                    const med = labelin;
+                    medName = med[0].toLowerCase();
+                    constructor = ""
+                    for (const key in window.data.table[medName]){
+                        constructor += `${key} ${ window.data.table[medName][key] > 0 ? '(Should Space)' : '(Cofactor)'} <br>`;
+                    }
+                    document.getElementById("pinfo").innerHTML = constructor;
+                } else {
+                    document.getElementById("pinfo").innerHTML = `Info goes here`;
+                }
 
                 bigPop.hidden = false;
                 bigPop.style.left = x + "px";
@@ -222,9 +234,10 @@
             </div>
         </div>
 
-        <div id="mobilepopup" hidden>
+        <div id="mobilepopup" hidden style="padding:20px">
+            <div style="position:relative;left:100px;top:-100px;height:0;width:0;border: 50px solid #fff0;border-bottom:50px solid #fff"></div>
             <button id = "closePopup" style="position: absolute; top: 6px; right: 8px; background: pink; width: 50px; height: 50px; border-radius: 20000000%; font-size: 40px; color: #ff3b30; cursor: pointer;">×</button>
-            <p id="pinfo"></p>
+            <p id="pinfo" style="margin-top:-80px"></p>
         </div>
     </body>
 </html>

@@ -303,9 +303,14 @@ input[type="search"]{
 
 #mobilepopup{
     margin-top:50%;
-    height:200px;
-    width: 150px;
+    height:300px;
+    width: 300px;
     position:absolute;
     background:#fff;
 }
+
+#mobilepopup > p{
+    font-size:20px;
+}
+
 
