@@ -7,25 +7,54 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+        <meta name="color-scheme" content="light dark">
+
     </head>
-    <body onload = "importPhoto()">
+    <body onload = "importPhoto()" style="background-color: light-dark(#F0F2F5, #18191A); color: light-dark(#050505, #E4E6EB);">
 
         <div id = "header">
             <img src="assets/Cofactor.png" style="width:75px;height:75px;margin:12.5px">
-            <h1 id = "maintitle">My Schedule</h1>
+            <h1 id = "maintitle" style="margin-bottom: 20px; color: light-dark(#050505, #E4E6EB);">My Profile</h1>
         </div>
 
-        <div id = "rackbodyy">
-            
+        <div id = "rackbodyy" style="display: flex;flex-direction: column ;justify-content: center;align-items: center">
+            <img src="assets/Cofactor.png" style="width:275px;height:275px; margin-top: -20vh; border-radius: 100vw; border: 2px solid light-dark(#060706, #3E4042); box-shadow: 0px 0px 10px 2px black">
+            <br>
+            <h2 style="color: light-dark(#050505, #E4E6EB);">Repheal Bineam</h2>
+            <!-- Insert inside #rackbodyy -->
+<div style="background-color: light-dark(#FFFFFF, #242526); width: 420px; padding: 20px 24px; margin-top: 25px; display: flex; flex-direction: column; gap: 18px; border-radius: 8px;">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 20px; font-weight: 500; color: light-dark(#050505, #E4E6EB);">Notifications Enabled</span>
+        <button style="width: 28px; height: 28px; background-color: light-dark(#E4E6EB, #3A3B3C); border: none; border-radius: 4px; cursor: pointer;"></button>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 20px; font-weight: 500; color: light-dark(#050505, #E4E6EB);">Light / Dark Mode</span>
+        <button onclick="toggleDarkMode()" style="width: 28px; height: 28px; background-color: light-dark(#E4E6EB, #3A3B3C); border: none; border-radius: 4px; cursor: pointer;"></button>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 20px; font-weight: 500; color: light-dark(#050505, #E4E6EB);">Medication Information Mode</span>
+        <button style="width: 28px; height: 28px; background-color: #0866FF; border: none; border-radius: 4px; cursor: pointer;"></button>
+    </div>
+
+</div>
         </div>
 
-        <div id = "knee">
+        <!-- <div id = "knee">
             <button onclick="window.location.href = 'index.html';startup()">Discard Changes</button>
             <button>Save Changes</button>
-        </div>
+        </div> -->
 
         <div id = "footerx">
         </div>
 
+        <script>
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                html.style.colorScheme = getComputedStyle(html).colorScheme.includes('dark') ? 'light' : 'dark';
+            }
+        </script>
     </body>
 </html>
