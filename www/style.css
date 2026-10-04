@@ -189,7 +189,6 @@ h6, p{
     width: calc(100% - calc(var(--h) * 0.04));
     margin-top:225px;
     perspective: 1000px;
-
 }
 
 #rackbodyy{
@@ -205,6 +204,7 @@ h6, p{
     height: calc(65vh - 200px);
     width: calc(100%-100px);
     padding:50px;
+    margin-top:200px;
     margin-bottom:15vh
 }
 
