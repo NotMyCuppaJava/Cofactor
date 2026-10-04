@@ -42,6 +42,8 @@ p{
 
 }
 
+
+
 #knee{
     display:flex;
     height:9vh;
@@ -199,8 +201,20 @@ h6, p{
     margin-bottom:15vh
 }
 
+#rackbodyz{
+    height: calc(65vh - 200px);
+    width: calc(100%-100px);
+    padding:50px;
+    margin-bottom:15vh
+}
+
+
+
+
 
 #footer{
+    position:absolute;
+    bottom:0;
     background-color: #d9d9d9;
     height:20vh;
     text-align:center;
