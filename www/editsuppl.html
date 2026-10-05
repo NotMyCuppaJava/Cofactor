@@ -10,7 +10,7 @@
         <meta name="color-scheme" content="light dark">
 
     </head>
-    <body onload = "lightMode()" style="background-color: light-dark(#F0F2F5, #18191A); color: light-dark(#050505, #E4E6EB);">
+    <body onload = "lightMode();loadArticles()" style="background-color: light-dark(#F0F2F5, #18191A); color: light-dark(#050505, #E4E6EB);">
 
         <div id = "header">
             <img src="assets/Cofactor.png" style="width:75px;height:75px;margin:12.5px">
@@ -104,6 +104,28 @@
             function lightMode() {
                 const html = document.documentElement;
                 html.style.colorScheme = 'light';
+            }
+
+            async function searchNIHArticles(keyword) {
+                const url = `https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=${encodeURIComponent(keyword)}&format=json&pageSize=5`;
+
+                try {
+                    const response = await fetch(url);
+                    const data = await response.json();
+
+                    const articles = data.resultList.result.map(article => ({
+                    title: article.title,
+                    authors: article.authorString,
+                    journal: article.journalTitle,
+                    year: article.pubYear,
+                    doi: article.doi ? `https://doi.org/${article.doi}` : null,
+                    pmid: article.pmid ? `https://pubmed.ncbi.nlm.nih.gov/${article.pmid}/` : null
+                    }));
+
+                    return articles;
+                } catch (error) {
+                    console.error("Error fetching NIH articles:", error);
+                }
             }
         </script>
     </body>
