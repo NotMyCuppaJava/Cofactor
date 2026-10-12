@@ -10,7 +10,7 @@
         <meta name="color-scheme" content="light dark">
 
     </head>
-    <body onload = "lightMode();loadArticles()" style="background-color: light-dark(#F0F2F5, #18191A); color: light-dark(#050505, #E4E6EB);">
+    <body onload = "lightMode();loadUsername()" style="background-color: light-dark(#F0F2F5, #18191A); color: light-dark(#050505, #E4E6EB);">
 
         <div id = "header">
             <img src="assets/Cofactor.png" style="width:75px;height:75px;margin:12.5px">
@@ -86,16 +86,24 @@
         </div>
 
         <script>
+            function loadUsername(){
+                let m = localStorage.getItem("username") || "Enter username here"
+                document.getElementById("normaldisplay").innerHTML = `<h2 style="color: light-dark(#050505, #E4E6EB);">${m} <img src="assets/edit.svg" style="width:30px;height:30px;" onclick="editUsername()"></h2>`
+            }
             function editUsername() {
                 document.getElementById("normaldisplay").hidden = true;
                 document.getElementById("editdisplay").hidden = false;
-                document.getElementById("nameInput").value = "Repheal Bineam"; // Pre-fill with current name
+                document.getElementById("nameInput").value = localStorage.getItem('username')
             }
             function saveUsername() {
-                const newName = document.getElementById("nameInput").value;
+                const newn= document.getElementById("nameInput").value.trim()
+                if (newn) {
+                    localStorage.setItem("username", newn);
+                    document.getElementById("normaldisplay").innerHTML = `<h2 style="color: light-dark(#050505, #E4E6EB);">${newn} <img src="assets/edit.svg" style="width:30px;height:30px;" onclick="editUsername()"></h2>`
+                }
                 document.getElementById("normaldisplay").hidden = false;
                 document.getElementById("editdisplay").hidden = true;
-                document.getElementById("normaldisplay").innerHTML = `<h2 style="color: light-dark(#050505, #E4E6EB);">${newName} <img src="assets/edit.svg" style="width:30px;height:30px;" onclick="editUsername()"></h2>`;
+                document.getElementById("normaldisplay").innerHTML = `<h2 style="color: light-dark(#050505, #E4E6EB);">${newn} <img src="assets/edit.svg" style="width:30px;height:30px;" onclick="editUsername()"></h2>`
             }
             function toggleDarkMode() {
                 const html = document.documentElement;
