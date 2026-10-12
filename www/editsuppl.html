@@ -17,7 +17,7 @@
         </div>
 
         <div id = "rackbodyz" style="display: flex;flex-direction: column; align-items: center">
-            <img id="profileImage" src="assets/Cofactor.png" style="width:13vh;height:13vh; border-radius: 100vw; border: 2px solid light-dark(#060706, #3E4042); box-shadow: 0px 0px 10px 2px black; cursor: pointer;" onclick="document.getElementById('profileImageInput').click()">
+            <img id="profileImage" src="assets/Cofactor.png" style="width:13vh;height:13vh; border-radius: 100vw; border: 2px solid light-dark(#060706, #3E4042); box-shadow: 0px 0px 10px 2px black; cursor: pointer;" onclick="changeProfileImage()">
             <br>
             <span>
                 <div id="normaldisplay"><h2 style="color: light-dark(#050505, #E4E6EB);">Repheal Bineam <img src="assets/edit.svg" style="width:30px;height:30px;" onclick="editUsername()"></h2></div>
@@ -83,9 +83,22 @@
                 <p>Settings</p>
             </a>
         </div>
-        <input type="file" id="profileImageInput" accept="image/*" style="display: none;" onchange="saveProfileImage()">
 
-        <script>
+        <script type="importmap">
+        {
+        "imports": {
+            "@capacitor/core": "https://cdn.jsdelivr.net/npm/@capacitor/core@latest/+esm",
+            "@capacitor/camera": "https://cdn.jsdelivr.net/npm/@capacitor/camera@latest/+esm",
+            "@capacitor/filesystem": "https://cdn.jsdelivr.net/npm/@capacitor/filesystem@latest/+esm",
+            "@capacitor/preferences": "https://cdn.jsdelivr.net/npm/@capacitor/preferences@latest/+esm"
+        }
+        }
+        </script>
+        <script type="module">
+            import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+            import { Filesystem, Directory } from '@capacitor/filesystem';
+            import { Preferences } from '@capacitor/preferences';
+            import { Capacitor } from '@capacitor/core';
             function loadUsername(){
                 let m = localStorage.getItem("username") || "Enter username here"
                 document.getElementById("normaldisplay").innerHTML = `<h2 style="color: light-dark(#050505, #E4E6EB);">${m} <img src="assets/edit.svg" style="width:30px;height:30px;" onclick="editUsername()"></h2>`
@@ -105,28 +118,69 @@
                 document.getElementById("editdisplay").hidden = true;
                 document.getElementById("normaldisplay").innerHTML = `<h2 style="color: light-dark(#050505, #E4E6EB);">${newn} <img src="assets/edit.svg" style="width:30px;height:30px;" onclick="editUsername()"></h2>`
             }
-            function loadProfileImage() {
-                const savedImage = localStorage.getItem("profileImage");
-                if (savedImage) {
-                    document.getElementById("profileImage").src = savedImage;
+            async function changeProfileImage() {
+                try {
+                    const image = await Camera.getPhoto({
+                        quality: 80,
+                        allowEditing: true,
+                        resultType: CameraResultType.Uri,
+                        source: CameraSource.Photos,
+                        webUseInput: true
+                    });
+
+                    const fileName = `profile_${Date.now()}.jpeg`;
+                    const response = await fetch(image.webPath);
+                    const blob = await response.blob();
+                    
+                    const base64Data = await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => resolve(reader.result);
+                        reader.readAsDataURL(blob);
+                    });
+
+                    await Filesystem.writeFile({
+                        path: fileName,
+                        data: base64Data,
+                        directory: Directory.Data
+                    });
+
+                    // CHANGE 1: Store just the filename, not the absolute URI
+                    await Preferences.set({ key: 'profileImageName', value: fileName });
+
+                    // CHANGE 2: Display the image directly from the base64 string
+                    document.getElementById('profileImage').src = base64Data;
+
+                } catch (error) {
+                    console.error('Error changing profile image:', error);
                 }
             }
-            function saveProfileImage() {
-                const file = document.getElementById("profileImageInput").files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const imageDataUrl = e.target.result;
-                        localStorage.setItem("profileImage", imageDataUrl);
-                        document.getElementById("profileImage").src = imageDataUrl;
-                    };
-                    reader.readAsDataURL(file);
+
+            async function loadProfileImage() {
+                try {
+                    // Look up the filename we saved
+                    const { value: fileName } = await Preferences.get({ key: 'profileImageName' });
+                    
+                    if (fileName) {
+                        // Read the raw file data back from Capacitor's storage
+                        const file = await Filesystem.readFile({
+                            path: fileName,
+                            directory: Directory.Data
+                        });
+                        
+                        // Set the image source (ensuring it has the correct base64 prefix)
+                        document.getElementById('profileImage').src = file.data.includes('data:image') 
+                            ? file.data 
+                            : `data:image/jpeg;base64,${file.data}`;
+                    }
+                } catch (error) {
+                    console.error('Error loading profile image:', error);
                 }
             }
             function toggleDarkMode() {
                 const html = document.documentElement;
                 html.style.colorScheme = getComputedStyle(html).colorScheme.includes('dark') ? 'light' : 'dark';
             }
+
             function lightMode() {
                 const html = document.documentElement;
                 html.style.colorScheme = 'light';
@@ -153,6 +207,13 @@
                     console.error("Error fetching NIH articles:", error);
                 }
             }
+            window.loadUsername = loadUsername;
+            window.editUsername = editUsername;
+            window.saveUsername = saveUsername;
+            window.changeProfileImage = changeProfileImage;
+            window.loadProfileImage = loadProfileImage;
+            window.toggleDarkMode = toggleDarkMode;
+            window.lightMode = lightMode;
         </script>
     </body>
 </html>
