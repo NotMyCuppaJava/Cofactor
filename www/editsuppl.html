@@ -10,15 +10,14 @@
         <meta name="color-scheme" content="light dark">
 
     </head>
-    <body onload = "lightMode();loadUsername()" style="background-color: light-dark(#F0F2F5, #18191A); color: light-dark(#050505, #E4E6EB);">
-
+    <body onload="lightMode(); loadUsername(); loadProfileImage()" style="background-color: light-dark(#F0F2F5, #18191A); color: light-dark(#050505, #E4E6EB);">
         <div id = "header">
             <img src="assets/Cofactor.png" style="width:75px;height:75px;margin:12.5px">
             <h1 id = "maintitle" style="margin-bottom: 20px; color: light-dark(#050505, #E4E6EB);">My Profile</h1>
         </div>
 
         <div id = "rackbodyz" style="display: flex;flex-direction: column; align-items: center">
-            <img src="assets/Cofactor.png" style="width:13vh;height:13vh; border-radius: 100vw; border: 2px solid light-dark(#060706, #3E4042); box-shadow: 0px 0px 10px 2px black">
+            <img id="profileImage" src="assets/Cofactor.png" style="width:13vh;height:13vh; border-radius: 100vw; border: 2px solid light-dark(#060706, #3E4042); box-shadow: 0px 0px 10px 2px black; cursor: pointer;" onclick="document.getElementById('profileImageInput').click()">
             <br>
             <span>
                 <div id="normaldisplay"><h2 style="color: light-dark(#050505, #E4E6EB);">Repheal Bineam <img src="assets/edit.svg" style="width:30px;height:30px;" onclick="editUsername()"></h2></div>
@@ -84,6 +83,7 @@
                 <p>Settings</p>
             </a>
         </div>
+        <input type="file" id="profileImageInput" accept="image/*" style="display: none;" onchange="saveProfileImage()">
 
         <script>
             function loadUsername(){
@@ -104,6 +104,24 @@
                 document.getElementById("normaldisplay").hidden = false;
                 document.getElementById("editdisplay").hidden = true;
                 document.getElementById("normaldisplay").innerHTML = `<h2 style="color: light-dark(#050505, #E4E6EB);">${newn} <img src="assets/edit.svg" style="width:30px;height:30px;" onclick="editUsername()"></h2>`
+            }
+            function loadProfileImage() {
+                const savedImage = localStorage.getItem("profileImage");
+                if (savedImage) {
+                    document.getElementById("profileImage").src = savedImage;
+                }
+            }
+            function saveProfileImage() {
+                const file = document.getElementById("profileImageInput").files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const imageDataUrl = e.target.result;
+                        localStorage.setItem("profileImage", imageDataUrl);
+                        document.getElementById("profileImage").src = imageDataUrl;
+                    };
+                    reader.readAsDataURL(file);
+                }
             }
             function toggleDarkMode() {
                 const html = document.documentElement;
