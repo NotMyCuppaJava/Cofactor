@@ -32,6 +32,11 @@ function getFactor(suppA, suppB) {
     }  
 }
 
+function isMealRight(suppA, slot) {
+    let cheque = factors["anchors"][suppA]?.["anchor"] ?? undefined
+    return (cheque === slot || cheque === undefined)
+}
+
 function daysFromMeds(meds) {
     const calendar = Array.from({length: 7}, () => []);
 
@@ -91,9 +96,15 @@ function populateSlots(currentDay, medications, slots) {
     let best_score = -Infinity;
     let best_schedule = null;
     const current = medications[0];
+    
+    const translator = (slots.length === 2 ? {0:"breakfast", 1:"dinner"} : {0:"breakfast", 1:"lunch", 2:"dinner"})
 
+    idx = 0
     for (const key in currentDay) {
-        if (currentDay[key].includes(current)) continue; // This is actually a temporary fix
+        if (currentDay[key].includes(current) || !isMealRight(current, translator[idx])){
+            idx += 1;
+            continue;
+        }  // This is actually a temporary fix
         currentDay[key].push(current);
 
         const [score, schedule] = populateSlots(currentDay, medications.slice(1), slots);
@@ -104,8 +115,10 @@ function populateSlots(currentDay, medications, slots) {
             best_score = score;
             best_schedule = schedule;
         }
+        idx += 1
     }
     return [best_score, best_schedule];
+    
 }
 function scoreDay(currentDay) {
     const converted = [];

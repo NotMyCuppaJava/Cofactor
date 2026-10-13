@@ -98,5 +98,35 @@
   "cetirizine": {"alprazolam": 0.3, "diphenhydramine": 0.5},
   "oral contraceptives": {"caffeine": 0.2, "st. john's wort": 0.9, "levothyroxine": 0.3, "doxycycline": 0.2},
   "sildenafil": {"l-arginine": 0.4, "l-citrulline": 0.3, "st. john's wort": 0.3, "amlodipine": 0.3},
-  "prednisone": {"vitamin d3": -0.4, "calcium": -0.4, "echinacea": 0.3, "licorice": 0.4, "aspirin": 0.5, "ibuprofen": 0.5, "naproxen": 0.5, "metformin": 0.3, "warfarin": 0.4, "hydrochlorothiazide": 0.4, "ciprofloxacin": 0.5}
+  "prednisone": {"vitamin d3": -0.4, "calcium": -0.4, "echinacea": 0.3, "licorice": 0.4, "aspirin": 0.5, "ibuprofen": 0.5, "naproxen": 0.5, "metformin": 0.3, "warfarin": 0.4, "hydrochlorothiazide": 0.4, "ciprofloxacin": 0.5},
+  "anchors": {
+    "alendronate": {
+      "anchor": "breakfast",
+      "offset_minutes": -30
+    },
+    "hydrochlorothiazide": {
+      "anchor": "breakfast",
+      "offset_minutes": 0
+    },
+    "levothyroxine": {
+      "anchor": "breakfast",
+      "offset_minutes": -60
+    },
+    "omeprazole": {
+      "anchor": "breakfast",
+      "offset_minutes": -30
+    },
+    "prednisone": {
+      "anchor": "breakfast",
+      "offset_minutes": 0
+    },
+    "simvastatin": {
+      "anchor": "dinner",
+      "offset_minutes": 0
+    },
+    "spironolactone": {
+      "anchor": "breakfast",
+      "offset_minutes": 0
+    }
+  }
 }
