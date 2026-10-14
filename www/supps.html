@@ -187,6 +187,22 @@
                 importPhoto();                
             }
 
+            function submitMed() {
+                const select = document.getElementById("site-search");
+                const dose = document.getElementById("no");
+                existing = JSON.parse(localStorage.getItem("meds")) || [];
+                console.log(existing)
+                for (const med of existing){
+                    if (window.data.table[med[0]][select.value] === "CONTRAINDICATED" || window.data.table[select.value][med[0]] === "CONTRAINDICATED"){
+                        document.getElementById("warningpopup").style.display = "flex";
+                        document.querySelector("#warningpopup p").innerHTML = `The medication you just tried to add, ${select.value}, is CONTRAINDICATED with ${med[0]}. Please confer with your doctor before taking the two together, as clinically they are not compatible.`;
+                        return
+                    }
+                }
+                handleAddMed(select, dose);
+                popup.hidden = true;
+            }
+
         </script>
     </head>
     <body onload="initSupps();initSearch();initOCR();">
@@ -220,7 +236,7 @@
             </a>
             <a href = "supps.html">
                 <img src="assets/pills.png" class="icon">
-                <p>Settings</p>
+                <p>Supplements</p>
             </a>
         </div>
         
@@ -233,14 +249,19 @@
                 <button style="width:70%" onclick="scanMed()">Scan Bottle</button>
                 <div style="display: flex; justify-content: space-around">
                     <input id = 'no' placeholder="#" style="width:20%">
-                    <button style="width:70%" onclick="handleAddMed(document.getElementById('site-search'), document.getElementById('no'));popup.hidden=true">Add Medication</button>
+                    <button style="width:70%" onclick="submitMed()">Add Medication</button>
                 </div>
-            </div>
+                </div>
+                <div style="display: none; position: absolute; top:32vh; left:10vw; background:#fff; width:80vw; height:30vh; padding:20px; box-sizing:border-box; justify-content:center; align-items:center; flex-direction:column; border-radius:10px" id="warningpopup" onclick="event.stopPropagation();">
+                    <img src="assets/warning.svg" style="width:50px;height:50px;">
+                    <p >The medication you just tried to add, X, is CONTRAINDICATED with Y. Please confer with your doctor before taking the two together, as clinically they are not compatible.</p>
+                    <button onclick="event.stopPropagation();document.getElementById('warningpopup').style.display='none'">OK</button>
+                </div>
         </div>
 
         <div id="mobilepopup" hidden style="padding:15px">
             <div style="position:relative;left:75px;top:-100px;height:0;width:0;border: 50px solid #fff0;border-bottom:50px solid #fff"></div>
-            <button id = "closePopup" style="position: absolute; top: 6px; right: 8px; background: pink; width: 50px; height: 50px; border-radius: 20000000%; font-size: 40px; color: #ff3b30; cursor: pointer;"><p style="margin-top:-7px">x</p></button>
+            <button id = "closePopup" style="position: absolute; top: 6px; right: 8px; background: pink; width: 50px; height: 50px; border-radius: 200%; font-size: 40px; color: #ff3b30; cursor: pointer;"><p style="margin-top:-7px">x</p></button>
             <p id="pinfo" style="margin-top:-80px; overflow-y:auto; height:200px"></p>
         </div>
     </body>
