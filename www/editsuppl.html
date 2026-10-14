@@ -10,14 +10,14 @@
         <meta name="color-scheme" content="light dark">
 
     </head>
-    <body onload="lightMode(); loadUsername(); loadProfileImage()" style="background-color: light-dark(#F0F2F5, #18191A); color: light-dark(#050505, #E4E6EB);">
+    <body onload="lightMode(); loadUsername(); loadProfileImage(); loadNIHArticles();" style="background-color: light-dark(#F0F2F5, #18191A); color: light-dark(#050505, #E4E6EB);">
         <div id = "header">
             <img src="assets/Cofactor.png" style="width:75px;height:75px;margin:12.5px">
             <h1 id = "maintitle" style="margin-bottom: 20px; color: light-dark(#050505, #E4E6EB);">My Profile</h1>
         </div>
 
         <div id = "rackbodyz" style="display: flex;flex-direction: column; align-items: center">
-            <img id="profileImage" src="assets/Cofactor.png" style="width:13vh;height:13vh; border-radius: 100vw; border: 2px solid light-dark(#060706, #3E4042); box-shadow: 0px 0px 10px 2px black; cursor: pointer;" onclick="changeProfileImage()">
+            <img id="profileImage" src="assets/Cofactor.png" style="width:13vh;height:13vh; border-radius: 100vw; border: 2px solid light-dark(#060706, #3E4042); box-shadow: 0px 0px 10px 2px black; cursor: pointer;   aspect-ratio: 1 / 1;" onclick="changeProfileImage()">
             <br>
             <span>
                 <div id="normaldisplay"><h2 style="color: light-dark(#050505, #E4E6EB);">Repheal Bineam <img src="assets/edit.svg" style="width:30px;height:30px;" onclick="editUsername()"></h2></div>
@@ -49,12 +49,12 @@
                 <h3 style="color: light-dark(#050505, #E4E6EB);">Suggested Reads</h3>
                 <div class="marquee__container">
                     <div class="marquee__belt">
-                        <div class="marquee__group">
+                        <div class="marquee__group" id="marquee__groupA">
                         <div class="marquee__item"><a href="https://www.health.harvard.edu/blog/medication-adherence-why-its-so-hard-and-how-to-improve-it-2020011518740" target="_blank">Medication Adherence: Why It's So Hard and How to Improve It</a></div>
                         <div class="marquee__item"><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2690232/" target="_blank">The Importance of Medication Adherence in Chronic Disease Management</a></div>
                         <div class="marquee__item"><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2690232/" target="_blank">The Role of Technology in Improving Medication Adherence</a></div>
                         </div>
-                        <div class="marquee__group" aria-hidden="true">
+                        <div class="marquee__group" id = "marquee__groupB">
                         <div class="marquee__item"><a href="https://www.health.harvard.edu/blog/medication-adherence-why-its-so-hard-and-how-to-improve-it-2020011518740" target="_blank">Medication Adherence: Why It's So Hard and How to Improve It</a></div>
                         <div class="marquee__item"><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2690232/" target="_blank">The Importance of Medication Adherence in Chronic Disease Management</a></div>
                         <div class="marquee__item"><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2690232/" target="_blank">The Role of Technology in Improving Medication Adherence</a></div>
@@ -207,9 +207,36 @@
                     console.error("Error fetching NIH articles:", error);
                 }
             }
+
+            async function loadNIHArticles() {
+                let medications = JSON.parse(localStorage.getItem("meds")) || [];
+                let set = []
+                let idx = 0
+                while (set.length < 3) {
+                    const searchKey = medications[idx % medications.length][0]
+                    const articles = await searchNIHArticles(searchKey);
+                    if (articles.length > Math.floor(idx / medications.length)) {
+                        set.push(articles[Math.floor(idx / medications.length)])
+                    }
+                    idx += 1
+                }
+                document.getElementById("marquee__groupA").innerHTML = ""                
+                document.getElementById("marquee__groupB").innerHTML = ""
+                for (const article of set) {
+                    const articleDiv = document.createElement("div");
+                    articleDiv.className = "marquee__item";
+                    articleDiv.innerHTML = `<a href="${article.doi || article.pmid}" target="_blank">${article.title}</a>`;
+                    const copyDiv = articleDiv.cloneNode(true);
+                    document.getElementById("marquee__groupA").appendChild(articleDiv);
+                    document.getElementById("marquee__groupB").appendChild(copyDiv);
+                }
+            }
+
             window.loadUsername = loadUsername;
             window.editUsername = editUsername;
             window.saveUsername = saveUsername;
+            window.loadNIHArticles = loadNIHArticles;
+            window.searchNIHArticles = searchNIHArticles;
             window.changeProfileImage = changeProfileImage;
             window.loadProfileImage = loadProfileImage;
             window.toggleDarkMode = toggleDarkMode;
