@@ -9,20 +9,6 @@ html, body {
     flex-direction: column;
 }
 
-@media (min-width: 768px) {
-  #app, #root {
-    max-width: 412px;           /* Simulates standard mobile viewport width */
-    max-height: 870px;          /* Simulates mobile height */
-    height: 90vh;
-    margin: 20px auto;          /* Centers the app frame horizontally */
-    border-radius: 30px;        /* Creates rounded device corners */
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-    overflow: hidden;
-    position: relative;
-    border: 8px solid #1e293b;  /* Optional phone bezel styling */
-  }
-}
-
 #header{
     margin-top:125px;
     position: fixed;
