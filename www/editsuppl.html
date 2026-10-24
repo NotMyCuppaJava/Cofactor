@@ -2,18 +2,17 @@
 <html>
     <head>
         <title>Cofactor</title>
-        <link rel="stylesheet" href="style.css">
         <!-- FONTS below -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
         <meta name="color-scheme" content="light dark">
-
+        <script src="cssmodifier.js"></script>
     </head>
-    <body onload="lightMode(); loadUsername(); loadProfileImage(); loadNIHArticles();" style="background-color: light-dark(#F0F2F5, #18191A); color: light-dark(#050505, #E4E6EB);">
+    <body onload="implementCSS(); lightMode(); loadUsername(); loadProfileImage(); loadNIHArticles();" style="background-color: light-dark(#F0F2F5, #18191A); color: light-dark(#050505, #E4E6EB);">
         <div id = "header">
             <img src="assets/Cofactor.png" style="width:75px;height:75px;margin:12.5px">
-            <h1 id = "maintitle" style="margin-bottom: 20px; color: light-dark(#050505, #E4E6EB);">My Profile</h1>
+            <h1 id = "maintitle">My Profile</h1>
         </div>
 
         <div id = "rackbodyz" style="display: flex;flex-direction: column; align-items: center">

@@ -2,12 +2,12 @@
 <html>
     <head>
         <title>Cofactor</title>
-        <link rel="stylesheet" href="style.css">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
         <script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'></script>
         <script src="ocr.js"></script>
+        <script src="cssmodifier.js"></script>
         <script>
             let recent_popup = null
             const fallbackItems = [
@@ -205,7 +205,7 @@
 
         </script>
     </head>
-    <body onload="initSupps();initSearch();initOCR();">
+    <body onload="initSupps();implementCSS();initSearch();initOCR();">
 
         <div id="header">
             <img src="assets/Cofactor.png" style="width:75px;height:75px;margin:12.5px">
