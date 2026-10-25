@@ -15,6 +15,11 @@ html, body {
     height: 100px;
 }
 
+#grouper{
+    height:100%;
+    overflow-y: scroll;
+}
+
 #footer{
     background-color: #d9d9d9;
     height:20vh;
@@ -34,7 +39,7 @@ p{
 
 #rackbody{
     display:flex;
-    height: calc(65vh - 100px);
+    height:fit-content;
     width: 100%;
     margin-top:100px;
     perspective: 1000px;
